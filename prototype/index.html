@@ -1,0 +1,771 @@
+<title>FiCo Prototype</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: the FiCo phone app on the left, a live log of what FiCo and Xcoins send each other on the right. Stacks on phones. */
+:root{
+  --bg:#E8EDEF; --panel:#F5F8F9; --surface:#FFFFFF; --ink:#13222A; --muted:#566872; --line:#D3DCE0;
+  --accent:#0E7A63; --accent-ink:#FFFFFF; --accent-soft:#DCEFE9; --frame:#1B272D;
+  --good:#1D7F47; --wait:#9A5B00; --bad:#B53A33; --info:#2A62A6; --hook:#8A4FB0;
+  --xc-bg:#0F1420; --xc-surface:#192131; --xc-raise:#222C40; --xc-fg:#EDF0F6; --xc-muted:#9AA4B8; --xc-line:#2B3549; --xc-accent:#F2A93B; --xc-accent-ink:#1E1400; --xc-bad:#FF8F86;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body:"Instrument Sans", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0C1215; --panel:#121A1E; --surface:#172227; --ink:#E4ECEF; --muted:#90A1AA; --line:#28363D;
+  --accent:#3CC6A3; --accent-ink:#04211A; --accent-soft:#143A31; --frame:#000000;
+  --good:#52C487; --wait:#E6A447; --bad:#F2817A; --info:#77AEEA; --hook:#C895EA; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1215; --panel:#121A1E; --surface:#172227; --ink:#E4ECEF; --muted:#90A1AA; --line:#28363D;
+  --accent:#3CC6A3; --accent-ink:#04211A; --accent-soft:#143A31; --frame:#000000;
+  --good:#52C487; --wait:#E6A447; --bad:#F2817A; --info:#77AEEA; --hook:#C895EA; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:24px}
+.top{display:grid;gap:6px}
+.top h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,38px);letter-spacing:-.02em;margin:0;text-wrap:balance}
+.top h1 span{color:var(--accent)}
+.top p{margin:0;color:var(--muted);max-width:68ch}
+.stage{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:32px;align-items:start}
+@media (max-width:900px){.stage{grid-template-columns:minmax(0,1fr)}.phone{margin-inline:auto}}
+
+/* ---------- Phone ---------- */
+.phone{position:relative;width:100%;max-width:400px;height:780px;border:10px solid var(--frame);border-radius:42px;background:var(--surface);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 34px 60px -34px rgba(8,28,36,.45)}
+@media (max-width:480px){.phone{height:720px;border-width:6px;border-radius:30px}}
+.app-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;border-bottom:1px solid var(--line)}
+.logo{font-family:var(--display);font-weight:700;font-size:24px;letter-spacing:-.03em}
+.logo span{color:var(--accent)}
+.bell{position:relative;background:none;border:0;padding:6px;border-radius:10px;display:grid;place-items:center}
+.bell:hover{background:var(--panel)}
+.badge{position:absolute;top:0;right:0;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--bad);color:#fff;font-size:11px;font-weight:600;display:grid;place-items:center}
+.views{flex:1;min-height:0;display:flex;flex-direction:column}
+.scroll{flex:1;min-height:0;overflow-y:auto}
+.nav{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}
+.nav button{background:none;border:0;padding:12px 8px 14px;color:var(--muted);font-weight:500}
+.nav button[aria-current="page"]{color:var(--accent);font-weight:600}
+
+/* Chat */
+.msgs{display:flex;flex-direction:column;gap:10px;padding:16px}
+.msg{max-width:88%;padding:10px 13px;border-radius:16px;line-height:1.45;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:4px}
+.msg.fico{align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-bottom-left-radius:4px;display:grid;gap:10px}
+.icard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:10px}
+.icard-h{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.icard dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
+.icard dt{color:var(--muted)}
+.icard dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;min-width:0}
+.icard-a{display:flex;gap:8px;flex-wrap:wrap}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:9px 14px;font-weight:600;font-size:14px}
+.btn.ghost{background:none;color:var(--ink);border:1px solid var(--line)}
+.btn.sm{padding:6px 11px;font-size:13px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.mono{font-family:var(--mono);font-size:12px}
+.composer{border-top:1px solid var(--line);padding:10px 12px 12px;display:grid;gap:8px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chip{white-space:nowrap;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 11px;font-size:13px}
+.chip:hover{border-color:var(--accent)}
+.composer form{display:flex;gap:8px}
+#ask{flex:1;min-width:0;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:12px;padding:10px 12px;font:inherit}
+.send{background:var(--accent);color:var(--accent-ink);border:0;border-radius:12px;width:44px;display:grid;place-items:center}
+
+/* Home */
+.home{padding:18px 16px 24px;display:grid;gap:22px}
+.bal .lbl,.home h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin:0}
+.bal .big{font-family:var(--display);font-weight:700;font-size:36px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.15}
+.list{display:grid;margin:8px 0 0;padding:0;list-style:none}
+.list li{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.list li:last-child{border-bottom:0}
+.list .sub{font-size:13px;color:var(--muted)}
+.list .r{text-align:right;flex-shrink:0}
+.empty{color:var(--muted);font-size:14px;margin:8px 0 0}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.pill.ok{color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent)}
+.pill.wait{color:var(--wait);background:color-mix(in srgb,var(--wait) 16%,transparent)}
+.pill.off{color:var(--muted);background:color-mix(in srgb,var(--muted) 14%,transparent)}
+.banner{background:color-mix(in srgb,var(--wait) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--wait) 35%,transparent);border-radius:14px;padding:12px 14px;display:grid;gap:8px}
+.banner b{color:var(--wait)}
+.fine{font-size:12px;color:var(--muted);margin:0}
+
+/* Notifications + toasts */
+.notifs{position:absolute;top:58px;left:10px;right:10px;z-index:25;background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -18px rgba(0,0,0,.4);max-height:60%;overflow:auto}
+.notifs ul{list-style:none;margin:0;padding:6px}
+.notifs li{padding:10px;border-radius:10px;display:grid;gap:4px}
+.notifs li+li{border-top:1px solid var(--line);border-radius:0}
+.notifs time{font-size:12px;color:var(--muted)}
+.toasts{position:absolute;top:62px;left:12px;right:12px;z-index:30;display:grid;gap:6px;pointer-events:none}
+.toast{background:var(--ink);color:var(--surface);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:500;box-shadow:0 10px 24px -10px rgba(0,0,0,.4);animation:drop .25s ease-out}
+@keyframes drop{from{transform:translateY(-8px);opacity:0}}
+
+/* ---------- Xcoins frame (its own brand, same in both themes) ---------- */
+.sheet-wrap{position:absolute;inset:0;z-index:20;background:rgba(4,9,14,.5);display:flex;align-items:flex-end}
+.sheet{width:100%;height:92%;background:var(--xc-bg);color:var(--xc-fg);border-radius:22px 22px 0 0;display:flex;flex-direction:column;overflow:hidden;animation:rise .28s ease-out}
+@keyframes rise{from{transform:translateY(24px);opacity:.4}}
+.chrome{display:flex;align-items:center;gap:8px;padding:9px 10px 9px 14px;background:var(--xc-surface);font:12px var(--mono);color:var(--xc-muted);border-bottom:1px solid var(--xc-line)}
+.chrome .url{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chrome button{background:var(--xc-raise);border:0;color:var(--xc-fg);border-radius:8px;padding:4px 10px;font:600 12px var(--body)}
+.xc-body{flex:1;min-height:0;overflow-y:auto;padding:18px 18px 22px;display:grid;gap:14px;align-content:start}
+.xc-brand{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.02em}
+.xc-brand span{color:var(--xc-accent)}
+.xc-body h2{font-family:var(--display);font-weight:700;font-size:23px;letter-spacing:-.01em;margin:0;line-height:1.2}
+.xc-body p{margin:0;color:var(--xc-muted)}
+.xc-tag{justify-self:start;font-size:12px;font-weight:600;color:var(--xc-accent);background:color-mix(in srgb,var(--xc-accent) 15%,transparent);padding:3px 9px;border-radius:999px}
+.xc-box{background:var(--xc-surface);border:1px solid var(--xc-line);border-radius:14px;padding:4px 14px}
+.xc-row{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--xc-line);font-variant-numeric:tabular-nums}
+.xc-row:last-child{border-bottom:0}
+.xc-row span:first-child{color:var(--xc-muted)}
+.xc-row.big b{font-size:17px}
+.xc-pay{border:0;margin:0;padding:0;display:grid;gap:8px}
+.xc-pay legend{font-size:13px;color:var(--xc-muted);margin-bottom:6px}
+.xc-opt{display:flex;gap:10px;align-items:center;background:var(--xc-surface);border:1px solid var(--xc-line);border-radius:12px;padding:11px 12px}
+.xc-opt:has(input:checked){border-color:var(--xc-accent)}
+.xc-opt:has(input:disabled){opacity:.5}
+.xc-opt small{display:block;color:var(--xc-muted);font-size:12.5px}
+.xc-opt input,.xc-check input{accent-color:var(--xc-accent)}
+.xc-check{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.xc-check input{margin-top:3px}
+.xc-addr{font:12px/1.5 var(--mono);word-break:break-all;color:var(--xc-fg)}
+.xc-btn{background:var(--xc-accent);color:var(--xc-accent-ink);border:0;border-radius:12px;padding:13px;font-weight:700;width:100%}
+.xc-btn.ghost{background:var(--xc-raise);color:var(--xc-fg)}
+.xc-btn:disabled{opacity:.4;cursor:not-allowed}
+.xc-note{font-size:13px}
+.xc-err{color:var(--xc-bad)!important;font-size:14px}
+.xc-otp{width:100%;background:var(--xc-surface);border:1px solid var(--xc-line);color:var(--xc-fg);border-radius:12px;padding:14px;font:500 26px var(--mono);letter-spacing:.5em;text-align:center}
+.xc-field{display:grid;gap:6px;font-size:14px;color:var(--xc-muted)}
+.xc-field select{background:var(--xc-surface);color:var(--xc-fg);border:1px solid var(--xc-line);border-radius:10px;padding:10px;font:inherit}
+.xc-steps{margin:0;padding-left:20px;display:grid;gap:6px}
+.spinner{width:34px;height:34px;border-radius:50%;border:3px solid var(--xc-line);border-top-color:var(--xc-accent);animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.xc-foot{padding:10px 18px 14px;font-size:11.5px;color:var(--xc-muted);border-top:1px solid var(--xc-line)}
+
+/* ---------- Under the hood ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:22px;display:grid;gap:22px;min-width:0}
+.panel h2{font-family:var(--display);font-weight:700;font-size:22px;margin:0;letter-spacing:-.01em}
+.panel h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin:0 0 10px}
+.panel > p{margin:-14px 0 0;color:var(--muted);max-width:70ch}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:12px;padding:3px;background:var(--surface);gap:2px}
+.seg button{border:0;background:none;padding:7px 12px;border-radius:9px;font-size:13.5px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--ink);font-weight:600}
+.ops{display:flex;flex-wrap:wrap;gap:8px}
+.op{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;font-size:13.5px}
+.op:hover{border-color:var(--accent)}
+.rules{margin:0;padding-left:18px;display:grid;gap:6px;max-width:72ch}
+details.box > summary{cursor:pointer;font-weight:600}
+.log{list-style:none;margin:0;padding:0;display:grid;gap:8px;max-height:620px;overflow-y:auto}
+@media (max-width:900px){.log{max-height:none}}
+.ev{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:4px;min-width:0}
+.ev-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 10px}
+.dir{font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.dir.agent{color:var(--accent)}.dir.out,.dir.api{color:var(--info)}.dir.in{color:var(--hook)}.dir.internal{color:var(--muted)}
+.ev code{font:500 13px var(--mono)}
+.ev time{margin-left:auto;font:12px var(--mono);color:var(--muted)}
+.tag{font-size:11px;font-weight:600;padding:1px 7px;border-radius:999px}
+.tag.new{color:var(--wait);background:color-mix(in srgb,var(--wait) 15%,transparent)}
+.tag.today{color:var(--good);background:color-mix(in srgb,var(--good) 14%,transparent)}
+.ev p{margin:0;font-size:13.5px;color:var(--muted)}
+.ev summary{font-size:13px;cursor:pointer;color:var(--muted)}
+.ev pre{font:12px/1.5 var(--mono);background:var(--panel);border:1px solid var(--line);padding:10px;border-radius:8px;margin:6px 0 0;overflow-x:auto;max-width:100%}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Fi<span>Co</span> prototype</h1>
+    <p>FiCo owns the customer and the conversation. Xcoins runs every order and holds the licence. FiCo fills in a buy, and the customer confirms it inside the Xcoins window. Prices, codes and accounts are made up.</p>
+  </header>
+
+  <div class="stage">
+    <div class="phone" id="phone">
+      <div class="app-head">
+        <div class="logo">Fi<span>Co</span></div>
+        <button class="bell" id="bell" data-act="bell" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 16v-5a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>
+          <span class="badge" id="badge" hidden></span>
+        </button>
+      </div>
+      <div class="views">
+        <div class="scroll" id="homeView" hidden></div>
+        <div class="views" id="chatView">
+          <div class="scroll"><div class="msgs" id="msgs" aria-live="polite"></div></div>
+          <div class="composer">
+            <div class="chips" id="chips">
+              <button class="chip" data-act="chip">Buy €50 of bitcoin</button>
+              <button class="chip" data-act="chip">Buy €25 of BTC every Monday</button>
+              <button class="chip" data-act="chip">Buy €100 of ETH to my Ledger</button>
+              <button class="chip" data-act="chip">Should I buy now?</button>
+              <button class="chip" data-act="chip">Cancel my autobuy</button>
+            </div>
+            <form id="askForm" autocomplete="off">
+              <input id="ask" name="ask" placeholder="Ask FiCo…" aria-label="Message FiCo">
+              <button class="send" aria-label="Send"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <nav class="nav">
+        <button data-act="tab" data-v="home">Home</button>
+        <button data-act="tab" data-v="chat">Assistant</button>
+      </nav>
+      <div class="notifs" id="notifs" hidden></div>
+      <div class="toasts" id="toasts"></div>
+      <div class="sheet-wrap" id="sheet" hidden></div>
+    </div>
+
+    <section class="panel" aria-label="Under the hood">
+      <h2>Under the hood</h2>
+      <p>Everything FiCo and Xcoins send each other, newest first. Items marked <span class="tag new">proposed</span> don't exist in the Xcoins partner API yet. Items marked <span class="tag today">exists</span> work today.</p>
+
+      <div>
+        <h3>Customer at Xcoins</h3>
+        <div class="seg" id="seg" role="group" aria-label="Customer status at Xcoins">
+          <button data-act="status" data-v="new">New, not verified</button>
+          <button data-act="status" data-v="review">Verified, early buys reviewed</button>
+          <button data-act="status" data-v="trusted">Automatic approval</button>
+        </div>
+      </div>
+
+      <div>
+        <h3>Play Xcoins operations</h3>
+        <div class="ops">
+          <button class="op" data-act="approve">Approve buys waiting for review</button>
+          <button class="op" data-act="cardProof">Ask for card photo</button>
+          <button class="op" data-act="aml">AML threshold reached</button>
+          <button class="op" data-act="runAuto">Run autobuys now</button>
+          <button class="op" data-act="reset">Start over</button>
+        </div>
+      </div>
+
+      <details class="box">
+        <summary>Rules this prototype assumes</summary>
+        <ul class="rules">
+          <li>FiCo fills in, Xcoins confirms. Every buy and every new autobuy is confirmed in the Xcoins window with a one-time code.</li>
+          <li>Presets are signed with FiCo's partner key and expire after 10 minutes. Xcoins rejects presets that are unsigned, expired or already used.</li>
+          <li>A wallet address from FiCo counts as new until the customer confirms it inside Xcoins.</li>
+          <li>FiCo can cancel an autobuy through the API. Starting or raising one needs the Xcoins window.</li>
+          <li>Xcoins can hold buys and ask for documents at any time. FiCo passes the request on and sends the customer to Xcoins to answer.</li>
+          <li>FiCo doesn't suggest what or when to buy. It carries out what the customer asks for.</li>
+        </ul>
+      </details>
+
+      <div>
+        <h3>Messages</h3>
+        <ul class="log" id="log"></ul>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rid = (n = 6) => Math.random().toString(36).slice(2, 2 + n).padEnd(n, '0');
+const uuid = () => (crypto.randomUUID ? crypto.randomUUID() : rid(8) + '-' + rid(4) + '-' + rid(4) + '-' + rid(12));
+
+// Demo data. None of these are real prices, fees or limits.
+const PRICES = { BTC: 98500, ETH: 3420, SOL: 165 };
+const NAMES = { BTC: 'Bitcoin', ETH: 'Ether', SOL: 'Solana' };
+const DECIMALS = { BTC: 6, ETH: 5, SOL: 3 };
+const FEE = 0.015, REVIEWED_BUYS = 3, OTP = '123456', MIN_EUR = 10;
+const USER_REF = 'fico_usr_0193', XC_USER = 'xc_5f2e9a41';
+const WALLETS = {
+  ETH: { label: 'Ledger', network: 'ethereum', address: '0x8f3a9C02b6E41d5F7a2b0c9E1d44F6a8B3e7c21E' },
+  BTC: { label: 'Ledger', network: 'bitcoin', address: 'bc1q9h6tq8x7k2r4m0v5w3e8l6c2a9z7y4p0s3d5f' },
+};
+const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+const eur = n => '€' + n.toLocaleString('en-IE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const amt = (n, a) => n.toFixed(DECIMALS[a]) + ' ' + a;
+const short = a => a.slice(0, 8) + '…' + a.slice(-6);
+const cap = s => s[0].toUpperCase() + s.slice(1);
+const clock = () => new Date().toLocaleTimeString('en-GB');
+const dayLabel = d => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+const quote = (e, a) => ({ fee: e * FEE, crypto: e * (1 - FEE) / PRICES[a] });
+
+function nextRun(s) {
+  const d = new Date(); d.setHours(0, 0, 0, 0);
+  if (s.freq === 'daily') d.setDate(d.getDate() + 1);
+  else if (s.freq === 'monthly') d.setMonth(d.getMonth() + 1, 1);
+  else d.setDate(d.getDate() + (((s.day - d.getDay() + 7) % 7) || 7));
+  return dayLabel(d);
+}
+const schLabel = s => s.freq === 'daily' ? 'every day' : s.freq === 'monthly' ? 'on the 1st of each month' : 'every ' + cap(DAYS[s.day]);
+const ACTIONS = {
+  CARD_PROOF: { title: 'Photo of your card', line: 'Xcoins needs a photo of your card before your next buy.' },
+  AML_QUESTIONNAIRE: { title: 'A few questions about your money', line: 'Xcoins needs you to answer a few questions about where your money comes from.' },
+};
+
+// ---------- State ----------
+let S, intents;
+function fresh() {
+  intents = {};
+  S = {
+    status: 'review', completed: 1, cash: 324.12, card: 'Visa •• 4242',
+    holdings: { BTC: 0.0005, ETH: 0, SOL: 0 },
+    orders: [{ id: 'ord_k2m81q', asset: 'BTC', eur: 50, crypto: 0.0005, status: 'COMPLETED', source: 'One-off', at: 'Tue 20 Oct' }],
+    autobuys: [], action: null, notifs: [], unread: 0, log: [], tab: 'chat', sheet: null, notifOpen: false,
+    chat: [{ from: 'fico', html: 'Hi Alex. I can buy crypto for you, once or on a schedule. <strong>Xcoins</strong> carries out every order, and you confirm it in their secure window.' }],
+  };
+}
+
+// ---------- Log + webhooks ----------
+function log(dir, title, note, body, kind) {
+  S.log.unshift({ t: clock(), dir, title, note, body, kind });
+  renderLog();
+}
+function hook(event, data, note, kind = 'new') {
+  log('in', event, note, {
+    headers: { 'X-Signature': 'base64(RSA-SHA512(rawBody + nonce))', 'X-Nonce': uuid() },
+    body: { event, data: { providedUserId: USER_REF, xcoinsUserId: XC_USER, ...data } },
+  }, kind);
+  onWebhook(event, data);
+}
+
+// What FiCo does when Xcoins tells it something.
+function onWebhook(ev, d) {
+  const o = d.orderId && S.orders.find(x => x.id === d.orderId);
+  const a = d.autobuyId && S.autobuys.find(x => x.id === d.autobuyId);
+  if (ev === 'ORDER:IN_REVIEW') {
+    say(`Xcoins is checking your ${eur(o.eur)} ${NAMES[o.asset]} buy. They do this for your first few buys. I'll tell you when it's done.`);
+    notify('Buy sent for a quick check', `${eur(o.eur)} of ${NAMES[o.asset]}`);
+  } else if (ev === 'ORDER:COMPLETED') {
+    say(`Done. You bought ${amt(o.crypto, o.asset)} for ${eur(o.eur)}${o.dest ? `, on its way to your ${o.dest.label}` : ''}.`);
+    notify('Buy complete', `${amt(o.crypto, o.asset)} for ${eur(o.eur)}`);
+  } else if (ev === 'ORDER:ON_HOLD') {
+    say(`Your autobuy for ${NAMES[a.asset]} is on hold. ${ACTIONS[d.reason].line}`, { button: { act: 'openAction', label: 'Open in Xcoins' } });
+    notify('Autobuy on hold', ACTIONS[d.reason].title, 'openAction');
+  } else if (ev === 'AUTOBUY:CREATED') {
+    say(`Your autobuy is on: ${eur(a.eur)} of ${NAMES[a.asset]} ${schLabel(a.schedule)}. First run ${a.next}. Say "cancel my autobuy" to stop it.`);
+    notify('Autobuy is on', `${eur(a.eur)} of ${NAMES[a.asset]} ${schLabel(a.schedule)}`);
+  } else if (ev === 'AUTOBUY:CANCELLED') {
+    say(`Cancelled. No more buys from your ${NAMES[a.asset]} autobuy.`);
+    notify('Autobuy cancelled', `${eur(a.eur)} of ${NAMES[a.asset]}`);
+  } else if (ev === 'ACTION:REQUIRED') {
+    say(ACTIONS[d.action].line + ' It takes a minute.', { button: { act: 'openAction', label: 'Open in Xcoins' } });
+    notify('Xcoins needs something from you', ACTIONS[d.action].title, 'openAction');
+  } else if (ev === 'ACTION:SUBMITTED') {
+    say('Thanks. Xcoins has what they asked for.');
+  }
+  render();
+}
+
+function say(html, extra = {}) { S.chat.push({ from: 'fico', html, ...extra }); }
+function notify(title, body, act) {
+  S.notifs.unshift({ title, body, act, t: clock() }); S.unread++;
+  const el = document.createElement('div'); el.className = 'toast'; el.textContent = title;
+  $('#toasts').appendChild(el); setTimeout(() => el.remove(), 3200);
+}
+
+// ---------- The assistant ----------
+// Stand-in for the LLM: turns a message into a structured request FiCo can check.
+function parse(t) {
+  if (/\b(should i|recommend|good time|is it time|worth (it|buying)|what should i buy|advice|predict)\b/.test(t)) return { kind: 'advice' };
+  if (/\b(cancel|stop|pause|delete)\b/.test(t) && /(auto|recurring|every|schedule)/.test(t)) return { kind: 'cancel' };
+  if (/\b(portfolio|holdings|balance|what do i (have|own)|how much do i (have|own))\b/.test(t)) return { kind: 'holdings' };
+  if (/\d+(?:[.,]\d+)?\s*(btc|eth|sol)\b/.test(t)) return { kind: 'cryptoAmount' };
+  const asset = /\b(btc|bitcoin)\b/.test(t) ? 'BTC' : /\b(eth|ether|ethereum)\b/.test(t) ? 'ETH' : /\b(sol|solana)\b/.test(t) ? 'SOL' : null;
+  if (!asset && !/\b(buy|get|purchase|invest|autobuy|auto-buy|dca)\b/.test(t)) return { kind: 'unknown' };
+  const n = t.match(/(\d+(?:[.,]\d{1,2})?)/);
+  const amount = n ? parseFloat(n[1].replace(',', '.')) : null;
+  const day = DAYS.findIndex(d => new RegExp('\\b' + d + 's?\\b').test(t));
+  let schedule = null;
+  if (/\b(daily|every day)\b/.test(t)) schedule = { freq: 'daily' };
+  else if (/\b(monthly|every month)\b/.test(t)) schedule = { freq: 'monthly' };
+  else if (day >= 0) schedule = { freq: 'weekly', day };
+  else if (/\b(weekly|every week)\b/.test(t)) schedule = { freq: 'weekly', day: 1 };
+  const wantsWallet = /\b(to|into|on)\s+my\s+(ledger|wallet|metamask|hardware wallet)\b/.test(t);
+  const dest = wantsWallet && asset ? WALLETS[asset] || null : null;
+  return { kind: schedule ? 'autobuy' : 'buy', asset, amount, schedule, dest, destMissing: wantsWallet && !dest };
+}
+
+function handleAsk(text) {
+  S.chat.push({ from: 'user', text });
+  const i = parse(text.toLowerCase());
+  const { destMissing, ...shown } = i;
+  log('agent', 'Message understood', 'FiCo turns the message into a structured request. In the real build a language model does this step and FiCo checks the result; here it is a few rules.', { message: text, request: shown });
+  respond(i);
+  S.tab = 'chat';
+  render();
+}
+
+function respond(i) {
+  if (i.kind === 'advice') return say("I don't give advice on what or when to buy. When you've decided, tell me the coin and the amount and I'll set it up, once or on a schedule.");
+  if (i.kind === 'holdings') return say(holdingsText());
+  if (i.kind === 'cryptoAmount') return say('For now I can only buy in euros. Try "Buy €50 of bitcoin".');
+  if (i.kind === 'cancel') return S.autobuys.some(a => a.active)
+    ? say('Here are your autobuys. Cancelling stops the next run straight away.', { autobuys: true })
+    : say("You don't have any autobuys right now.");
+  if (i.kind === 'unknown') return say('I can buy bitcoin, ether or solana for you, once or on a schedule, and send it to your own wallet. Try "Buy €25 of BTC every Monday".');
+  if (!i.asset) return say('Which coin? I can buy bitcoin, ether or solana.');
+  if (!i.amount) return say(`How much in euros? For example "€50 of ${NAMES[i.asset].toLowerCase()}".`);
+  if (i.amount < MIN_EUR) return say(`The smallest buy is ${eur(MIN_EUR)}.`);
+  if (i.destMissing) return say(`You don't have a saved ${NAMES[i.asset]} wallet yet. I can keep it in your Xcoins wallet instead: try "Buy €${i.amount} of ${i.asset}".`);
+  i.id = 'int_' + rid(); intents[i.id] = i;
+  say(i.kind === 'autobuy'
+    ? 'Here is the autobuy. Xcoins shows you the final terms and asks you to confirm.'
+    : 'Here is the buy. Xcoins shows you the live price and asks you to confirm.', { intent: i.id });
+}
+
+function holdingsText() {
+  const held = Object.entries(S.holdings).filter(([, v]) => v > 0);
+  const parts = held.map(([a, v]) => `${amt(v, a)} (≈ ${eur(v * PRICES[a])})`);
+  return (held.length ? 'At Xcoins you hold ' + parts.join(' and ') + '.' : "You don't hold any crypto yet.") + ` You also have ${eur(S.cash)} in your Xcoins EUR account.`;
+}
+
+// ---------- Opening Xcoins ----------
+function buildPreset(i) {
+  return {
+    presetId: 'pst_' + rid(8), type: i.kind === 'autobuy' ? 'AUTOBUY' : 'BUY',
+    asset: i.asset, fiatAmount: i.amount.toFixed(2), fiatCurrency: 'EUR',
+    ...(i.schedule && { schedule: { frequency: i.schedule.freq.toUpperCase(), ...(i.schedule.freq === 'weekly' && { dayOfWeek: DAYS[i.schedule.day].toUpperCase() }) } }),
+    ...(i.dest && { destination: { network: i.dest.network, address: i.dest.address, label: i.dest.label } }),
+    providedUserId: USER_REF, nonce: rid(12), expiresAt: new Date(Date.now() + 600000).toISOString(),
+  };
+}
+
+function openXcoins(intentId) {
+  const i = intentId ? intents[intentId] : null;
+  const preset = i ? buildPreset(i) : null;
+  const secret = uuid();
+  const src = `https://onramp.xcoins.network/en/login?userId=${XC_USER}&attemptSecret=${secret}` + (preset ? `&preset=${btoa(JSON.stringify(preset)).slice(0, 24)}…&presetSig=…` : '');
+  log('out', 'Open Xcoins window', preset
+    ? "FiCo signs the preset with its partner key, the same key it already uses for the login handshake. Xcoins locks the coin, amount and destination to what was signed."
+    : 'FiCo opens Xcoins without a preset so the customer can answer what Xcoins asked for.',
+    { iframeSrc: src, ...(preset && { preset, presetSig: 'base64(RSA-SHA512(preset + nonce)), signed with the FiCo partner key' }) }, preset ? 'new' : 'today');
+  log('in', 'USER:LOGIN', 'Xcoins asks FiCo to approve the login.', { body: { event: 'USER:LOGIN', data: { providedUserId: USER_REF, xcoinsUserId: XC_USER, attemptSecret: secret } } }, 'today');
+  log('out', 'Login approved', "FiCo checks that the attempt secret is the one it just issued, marks it used, and replies with a signed APPROVED.", { status: 'APPROVED' }, 'today');
+  S.sheet = {
+    intent: i, preset, done: false, uploaded: false,
+    step: S.status === 'new' ? 'kyc' : S.action ? 'action' : i ? 'review' : 'idle',
+    pay: i && S.cash >= i.amount ? 'cash' : 'card',
+  };
+  if (i) i.used = true;
+  S.notifOpen = false;
+  renderSheet(); render();
+}
+
+function closeSheet() {
+  const sh = S.sheet;
+  if (sh && sh.intent && !sh.done) sh.intent.used = false;
+  S.sheet = null; renderSheet(); render();
+}
+
+function nextStepAfterGate() { return S.action ? 'action' : S.sheet.intent ? 'review' : 'idle'; }
+
+// ---------- Orders ----------
+function placeOrder(asset, e, meta) {
+  const q = quote(e, asset);
+  const o = { id: 'ord_' + rid(), asset, eur: e, crypto: q.crypto, status: 'CREATED', source: meta.source, dest: meta.dest || null, at: dayLabel(new Date()) };
+  if (meta.pay === 'cash') S.cash = Math.max(0, +(S.cash - e).toFixed(2));
+  S.orders.unshift(o);
+  const base = {
+    orderId: o.id, ...(meta.presetId && { presetId: meta.presetId }), ...(meta.autobuyId && { autobuyId: meta.autobuyId }),
+    asset, fiatAmount: e.toFixed(2), fiatCurrency: 'EUR', cryptoAmount: q.crypto.toFixed(DECIMALS[asset]),
+    paymentMethod: meta.pay === 'cash' ? 'EUR_BALANCE' : 'CARD', destination: o.dest ? o.dest.address : 'XCOINS_WALLET',
+  };
+  o.base = base;
+  hook('ORDER:CREATED', { ...base, status: 'CREATED' }, 'Xcoins accepted the order. FiCo records it and waits.');
+  if (S.status === 'trusted') complete(o, 'Automatic approval is on for this customer, so the order settles straight away.');
+  else {
+    o.status = 'IN_REVIEW';
+    hook('ORDER:IN_REVIEW', { ...o.base, status: 'IN_REVIEW' }, "Xcoins operations checks this customer's early buys by hand before they settle.");
+  }
+  return o;
+}
+
+function complete(o, note) {
+  o.status = 'COMPLETED';
+  if (!o.dest) S.holdings[o.asset] += o.crypto;
+  S.completed++;
+  hook('ORDER:COMPLETED', { ...o.base, status: 'COMPLETED', ...(o.dest && { txHash: '0x' + rid(10) + '…' }) }, note);
+  if (S.status === 'review' && S.completed >= REVIEWED_BUYS) {
+    S.status = 'trusted';
+    log('internal', 'Automatic approval on', `This customer now has ${S.completed} completed buys, so new buys skip manual review. Xcoins operations can still ask for documents at any time.`, null);
+    renderSeg();
+  }
+}
+
+// ---------- Rendering ----------
+function render() {
+  $('#homeView').hidden = S.tab !== 'home';
+  $('#chatView').hidden = S.tab !== 'chat';
+  document.querySelectorAll('.nav button').forEach(b => b.dataset.v === S.tab ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current'));
+  renderHome(); renderChat(); renderBell(); renderSeg();
+}
+
+function renderSeg() {
+  document.querySelectorAll('#seg button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v === S.status)));
+}
+
+function renderBell() {
+  const b = $('#badge'); b.hidden = !S.unread; b.textContent = S.unread;
+  const n = $('#notifs'); n.hidden = !S.notifOpen;
+  if (!S.notifOpen) return;
+  n.innerHTML = S.notifs.length
+    ? '<ul>' + S.notifs.map(x => `<li><strong>${esc(x.title)}</strong><span class="small muted">${esc(x.body)}</span>${x.act && S.action ? `<div><button class="btn sm" data-act="${x.act}">Open in Xcoins</button></div>` : ''}<time>${x.t}</time></li>`).join('') + '</ul>'
+    : '<p class="empty" style="padding:14px;margin:0">No notifications yet.</p>';
+}
+
+function autobuyList() {
+  const list = S.autobuys.filter(a => a.active);
+  if (!list.length) return '<p class="empty">No autobuys yet. Ask FiCo: "Buy €25 of BTC every Monday".</p>';
+  return '<ul class="list">' + list.map(a => `<li><div><div>${eur(a.eur)} of ${NAMES[a.asset]}</div><div class="sub">${cap(schLabel(a.schedule))} · next ${a.next}</div></div><button class="btn ghost sm" data-act="cancelAb" data-id="${a.id}">Cancel</button></li>`).join('') + '</ul>';
+}
+
+function renderHome() {
+  const total = Object.entries(S.holdings).reduce((s, [a, v]) => s + v * PRICES[a], 0);
+  const held = Object.entries(S.holdings).filter(([, v]) => v > 0);
+  const pill = s => s === 'COMPLETED' ? '<span class="pill ok">Done</span>' : s === 'IN_REVIEW' ? '<span class="pill wait">Checking</span>' : '<span class="pill off">' + esc(s.toLowerCase()) + '</span>';
+  $('#homeView').innerHTML = `<div class="home">
+    ${S.action ? `<div class="banner"><b>Xcoins needs something from you</b><span class="small">${ACTIONS[S.action.type].line}</span><div><button class="btn sm" data-act="openAction">Open in Xcoins</button></div></div>` : ''}
+    <section class="bal"><div class="lbl">Crypto at Xcoins</div><div class="big">${eur(total)}</div><div class="muted small">Plus ${eur(S.cash)} in your Xcoins EUR account · demo prices</div></section>
+    <section><h3>Holdings</h3>${held.length ? '<ul class="list">' + held.map(([a, v]) => `<li><div><div>${NAMES[a]}</div><div class="sub">${amt(v, a)}</div></div><div class="r">${eur(v * PRICES[a])}</div></li>`).join('') + '</ul>' : '<p class="empty">No crypto yet.</p>'}</section>
+    <section><h3>Autobuys</h3>${autobuyList()}</section>
+    <section><h3>Recent buys</h3><ul class="list">${S.orders.slice(0, 6).map(o => `<li><div><div>${eur(o.eur)} of ${NAMES[o.asset]}</div><div class="sub">${o.source} · ${o.at}${o.dest ? ' · to ' + o.dest.label : ''}</div></div><div class="r">${pill(o.status)}</div></li>`).join('')}</ul></section>
+    <p class="fine">Crypto services are provided by Xcoins, a MiCA-licensed crypto-asset service provider. FiCo shows your Xcoins account and never holds your crypto.</p>
+  </div>`;
+}
+
+function intentCard(i) {
+  const est = quote(i.amount, i.asset).crypto;
+  return `<div class="icard"><div class="icard-h">${i.kind === 'autobuy' ? 'Autobuy' : 'One-off buy'}</div><dl>
+    <dt>Coin</dt><dd>${NAMES[i.asset]}</dd>
+    <dt>Amount</dt><dd>${eur(i.amount)}${i.kind === 'autobuy' ? ' each time' : ''}</dd>
+    ${i.schedule ? `<dt>When</dt><dd>${cap(schLabel(i.schedule))}<br><span class="muted small">First run ${nextRun(i.schedule)}</span></dd>` : ''}
+    <dt>Deliver to</dt><dd>${i.dest ? `${esc(i.dest.label)}<br><span class="mono muted">${short(i.dest.address)}</span>` : 'Your Xcoins wallet'}</dd>
+    <dt>Estimate</dt><dd>≈ ${amt(est, i.asset)}<br><span class="muted small">Xcoins gives the final price</span></dd></dl>
+    ${i.used ? '<p class="muted small" style="margin:0">Opened in Xcoins.</p>' : `<div class="icard-a"><button class="btn" data-act="open" data-id="${i.id}">Review in Xcoins</button><button class="btn ghost" data-act="edit" data-id="${i.id}">Change</button></div>`}</div>`;
+}
+
+function renderChat() {
+  const el = $('#msgs');
+  el.innerHTML = S.chat.map(m => {
+    if (m.from === 'user') return `<div class="msg user">${esc(m.text)}</div>`;
+    let h = `<div>${m.html}</div>`;
+    if (m.intent) h += intentCard(intents[m.intent]);
+    if (m.autobuys) h += autobuyList();
+    if (m.button && S.action) h += `<div><button class="btn sm" data-act="${m.button.act}">${m.button.label}</button></div>`;
+    return `<div class="msg fico">${h}</div>`;
+  }).join('');
+  const sc = el.parentElement; sc.scrollTop = sc.scrollHeight;
+}
+
+const DIRS = { agent: 'FiCo assistant', out: 'FiCo → Xcoins window', api: 'FiCo → Xcoins API', in: 'Xcoins → FiCo webhook', internal: 'Inside Xcoins' };
+function renderLog() {
+  const el = $('#log');
+  if (!S.log.length) { el.innerHTML = '<li class="empty">Nothing yet. Ask FiCo to buy something and the messages show up here.</li>'; return; }
+  el.innerHTML = S.log.map(e => `<li class="ev">
+    <div class="ev-h"><span class="dir ${e.dir}">${DIRS[e.dir]}</span><code>${esc(e.title)}</code>${e.kind === 'new' ? '<span class="tag new">proposed</span>' : e.kind === 'today' ? '<span class="tag today">exists</span>' : ''}<time>${e.t}</time></div>
+    <p>${esc(e.note)}</p>
+    ${e.body ? `<details><summary>Payload</summary><pre>${esc(JSON.stringify(e.body, null, 2))}</pre></details>` : ''}
+  </li>`).join('');
+}
+
+function renderSheet() {
+  const root = $('#sheet'), sh = S.sheet;
+  if (!sh) { root.hidden = true; root.innerHTML = ''; return; }
+  const i = sh.intent;
+  let b = '';
+  switch (sh.step) {
+    case 'kyc':
+      b = `<h2>Verify your identity</h2>
+        <p>Xcoins provides the crypto service, so they verify you once before your first buy. It takes about 3 minutes.</p>
+        <ol class="xc-steps"><li>Photo of your ID card or passport</li><li>A short selfie video</li><li>Your home address</li></ol>
+        <p class="xc-note">FiCo has already passed on your name, email and phone number, so you won't type them again.</p>
+        <button class="xc-btn" data-act="kyc">Start verification (demo)</button>`;
+      break;
+    case 'kycWait':
+      b = `<div class="spinner" role="status" aria-label="Checking"></div><h2>Checking your documents</h2><p>This usually takes under a minute.</p>`;
+      break;
+    case 'action': {
+      const t = S.action.type;
+      b = `<span class="xc-tag">${i ? 'Before your buy' : 'Requested by our team'}</span>`;
+      if (t === 'CARD_PROOF') b += `<h2>Photo of your card</h2>
+        <p>Our team needs to check that ${S.card} belongs to you. Take a photo of the front. Cover the middle 6 digits so only the first 6 and last 4 show.</p>
+        <button class="xc-btn ghost" data-act="upload">${sh.uploaded ? 'card-front.jpg added. Choose another' : 'Choose photo (demo)'}</button>
+        <button class="xc-btn" data-act="submitAction" ${sh.uploaded ? '' : 'disabled'}>Send to Xcoins</button>`;
+      else b += `<h2>A few questions about your money</h2>
+        <p>Once you reach certain amounts, we're required to understand where the money for your crypto comes from. Your answers stay with Xcoins.</p>
+        <label class="xc-field">Occupation<select id="aml-occ"><option>Employed</option><option>Self-employed</option><option>Student</option><option>Retired</option><option>Not working</option></select></label>
+        <label class="xc-field">Main source of the money<select id="aml-src"><option>Salary</option><option>Savings</option><option>Business income</option><option>Sale of property</option><option>Inheritance or gift</option></select></label>
+        <label class="xc-field">How much do you expect to buy each month?<select id="aml-vol"><option>Under €500</option><option>€500 to €2,000</option><option>€2,000 to €10,000</option><option>Over €10,000</option></select></label>
+        <button class="xc-btn" data-act="submitAction">Send answers</button>`;
+      break;
+    }
+    case 'review': {
+      const q = quote(i.amount, i.asset), auto = i.kind === 'autobuy';
+      b = `<h2>${auto ? 'Set up autobuy' : 'Buy ' + NAMES[i.asset]}</h2>
+        <div class="xc-box">
+          ${auto ? `<div class="xc-row"><span>Schedule</span><span>${cap(schLabel(i.schedule))}</span></div><div class="xc-row"><span>First run</span><span>${nextRun(i.schedule)}</span></div>` : ''}
+          <div class="xc-row"><span>You pay${auto ? ' each time' : ''}</span><b>${eur(i.amount)}</b></div>
+          <div class="xc-row"><span>Fee, 1.5% (demo)</span><span>${eur(q.fee)}</span></div>
+          <div class="xc-row"><span>Price (demo)</span><span>${eur(PRICES[i.asset])}</span></div>
+          <div class="xc-row big"><span>You get${auto ? ' each time' : ''}</span><b>≈ ${amt(q.crypto, i.asset)}</b></div>
+        </div>
+        <fieldset class="xc-pay"><legend>Pay with</legend>
+          <label class="xc-opt"><input type="radio" name="pay" value="cash" ${S.cash < i.amount ? 'disabled' : ''} ${sh.pay === 'cash' ? 'checked' : ''}><span>EUR account<small>${eur(S.cash)} available · your Xcoins IBAN</small></span></label>
+          <label class="xc-opt"><input type="radio" name="pay" value="card" ${sh.pay === 'card' ? 'checked' : ''}><span>${S.card}<small>Card saved at Xcoins</small></span></label>
+        </fieldset>
+        ${i.dest ? `<div class="xc-box" style="padding:12px 14px;display:grid;gap:8px"><div>Send to <b>${esc(i.dest.label)}</b> <span class="xc-tag" style="margin-left:6px">New address</span></div><div class="xc-addr">${i.dest.address}</div>
+          <p class="xc-note">FiCo suggested this address. Check it matches your wallet. Your one-time code confirms it.</p>
+          <label class="xc-check"><input type="checkbox" id="own"> This wallet is mine and only I control it</label></div>` : ''}
+        ${auto ? `<label class="xc-check"><input type="checkbox" id="consent"> I authorise Xcoins to take ${eur(i.amount)} ${schLabel(i.schedule)} until I cancel. I can cancel in FiCo or Xcoins at any time.</label>` : ''}
+        ${S.status === 'review' ? `<p class="xc-note">Our team checks your first ${REVIEWED_BUYS} buys before they complete. It usually takes a few minutes. After that, buys go through straight away.</p>` : ''}
+        <p class="xc-err" id="xc-err" hidden></p>
+        <button class="xc-btn" data-act="toOtp">Continue</button>
+        <p class="xc-note">FiCo set the coin and amount. To change them, close this window and ask FiCo.</p>`;
+      break;
+    }
+    case 'otp':
+      b = `<h2>Enter your code</h2><p>We sent a 6-digit code to +49 ••• ••• 4127.</p>
+        <input id="otp" class="xc-otp" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="······" aria-label="One-time code">
+        <p class="xc-note">Demo code: ${OTP}</p><p class="xc-err" id="xc-err" hidden></p>
+        <button class="xc-btn" data-act="confirm">${i.kind === 'autobuy' ? 'Start autobuy' : 'Buy now'}</button>`;
+      break;
+    case 'pending':
+      b = `<span class="xc-tag">Checking</span><h2>Sent to our team</h2><p>We're checking your ${eur(sh.order.eur)} ${NAMES[sh.order.asset]} buy. You'll get about ${amt(sh.order.crypto, sh.order.asset)}. FiCo will let you know when it's done.</p><button class="xc-btn" data-act="close">Back to FiCo</button>`;
+      break;
+    case 'done':
+      b = `<h2>Done</h2><p>You bought ${amt(sh.order.crypto, sh.order.asset)} for ${eur(sh.order.eur)}.${sh.order.dest ? ` It's on its way to your ${sh.order.dest.label}.` : ''}</p><button class="xc-btn" data-act="close">Back to FiCo</button>`;
+      break;
+    case 'autobuyDone':
+      b = `<h2>Autobuy is on</h2><p>${eur(sh.ab.eur)} of ${NAMES[sh.ab.asset]} ${schLabel(sh.ab.schedule)}. First run ${sh.ab.next}.</p><button class="xc-btn" data-act="close">Back to FiCo</button>`;
+      break;
+    case 'idle':
+      b = `<h2>All set</h2><p>${sh.answered ? 'Thanks. Our team will review what you sent.' : 'Nothing needs your attention right now.'}</p><button class="xc-btn" data-act="close">Back to FiCo</button>`;
+      break;
+  }
+  root.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-label="Xcoins secure window">
+    <div class="chrome"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span class="url">onramp.xcoins.network${sh.preset ? ' · ' + sh.preset.presetId : ''}</span><button data-act="close">Close</button></div>
+    <div class="xc-body"><div class="xc-brand">xcoins<span>.</span></div>${b}</div>
+    <div class="xc-foot">Crypto services by Xcoins, a MiCA-licensed crypto-asset service provider. Demo window, no real orders.</div>
+  </div>`;
+  root.hidden = false;
+  const first = root.querySelector('#otp') || root.querySelector('.xc-btn');
+  if (first) first.focus({ preventScroll: true });
+}
+
+function sheetError(msg) { const e = $('#xc-err'); e.textContent = msg; e.hidden = false; }
+
+// ---------- Actions ----------
+const act = {
+  tab: el => { S.tab = el.dataset.v; S.notifOpen = false; render(); },
+  chip: el => handleAsk(el.textContent.trim()),
+  bell: () => { S.notifOpen = !S.notifOpen; S.unread = 0; render(); },
+  open: el => openXcoins(el.dataset.id),
+  openAction: () => openXcoins(null),
+  close: () => closeSheet(),
+  edit: el => {
+    const i = intents[el.dataset.id];
+    $('#ask').value = `Buy €${i.amount} of ${i.asset}${i.schedule ? ' ' + schLabel(i.schedule) : ''}${i.dest ? ' to my ' + i.dest.label : ''}`;
+    $('#ask').focus();
+  },
+  kyc: () => {
+    S.sheet.step = 'kycWait'; renderSheet();
+    setTimeout(() => {
+      if (!S.sheet) return;
+      S.status = 'review';
+      hook('USER:APPROVED', { verificationLevel: 'FULL' }, 'Xcoins ran the identity check inside its own window, so FiCo needs no KYC provider of its own. The event is the same one partners get today.', 'today');
+      S.sheet.step = nextStepAfterGate(); renderSheet();
+    }, 1600);
+  },
+  upload: () => { S.sheet.uploaded = true; renderSheet(); },
+  submitAction: () => {
+    const type = S.action.type;
+    const answers = type === 'AML_QUESTIONNAIRE' ? { occupation: $('#aml-occ').value, sourceOfFunds: $('#aml-src').value, expectedMonthly: $('#aml-vol').value } : undefined;
+    log('internal', 'Answer received', type === 'CARD_PROOF' ? 'The card photo goes to the Xcoins review queue. FiCo never sees it.' : 'The answers are stored with the customer file at Xcoins. FiCo never sees them.', answers ? { answers } : null);
+    S.action = null;
+    hook('ACTION:SUBMITTED', { action: type }, 'FiCo only learns that the request was answered, so it can clear the banner. Held autobuys run again at their next scheduled time.');
+    S.sheet.answered = true;
+    S.sheet.step = nextStepAfterGate(); renderSheet();
+  },
+  toOtp: () => {
+    const i = S.sheet.intent;
+    const pay = document.querySelector('input[name="pay"]:checked');
+    if (!pay) return sheetError('Choose how you want to pay.');
+    if (i.dest && !$('#own').checked) return sheetError('Confirm the wallet is yours. You can only send to a wallet you control.');
+    if (i.kind === 'autobuy' && !$('#consent').checked) return sheetError('Tick the box to allow the repeat payments.');
+    S.sheet.pay = pay.value; S.sheet.step = 'otp'; renderSheet();
+  },
+  confirm: () => {
+    if ($('#otp').value.trim() !== OTP) return sheetError(`That code doesn't match. In this demo the code is ${OTP}.`);
+    const sh = S.sheet, i = sh.intent; sh.done = true;
+    if (i.kind === 'autobuy') {
+      const a = { id: 'ab_' + rid(), asset: i.asset, eur: i.amount, schedule: i.schedule, pay: sh.pay, dest: i.dest, active: true, next: nextRun(i.schedule) };
+      S.autobuys.push(a); sh.ab = a; sh.step = 'autobuyDone'; renderSheet();
+      hook('AUTOBUY:CREATED', { autobuyId: a.id, presetId: sh.preset.presetId, asset: a.asset, fiatAmount: a.eur.toFixed(2), fiatCurrency: 'EUR', schedule: sh.preset.schedule, paymentMethod: a.pay === 'cash' ? 'EUR_BALANCE' : 'CARD', firstRun: a.next }, 'Xcoins stores the mandate and runs it on schedule. FiCo is not needed for each run.');
+    } else {
+      const o = placeOrder(i.asset, i.amount, { source: 'One-off', presetId: sh.preset.presetId, pay: sh.pay, dest: i.dest });
+      sh.order = o; sh.step = o.status === 'COMPLETED' ? 'done' : 'pending'; renderSheet();
+    }
+  },
+  cancelAb: el => {
+    const a = S.autobuys.find(x => x.id === el.dataset.id); if (!a || !a.active) return;
+    log('api', `POST /v1/app-partners/{id}/autobuys/${a.id}/cancel`, 'FiCo can cancel without opening Xcoins, because stopping payments never needs extra checks. Starting or raising an autobuy always goes through the Xcoins window.', { reason: 'CUSTOMER_REQUEST' }, 'new');
+    a.active = false;
+    hook('AUTOBUY:CANCELLED', { autobuyId: a.id, cancelledBy: 'PARTNER' }, 'Xcoins confirms the cancellation.');
+  },
+  status: el => {
+    S.status = el.dataset.v;
+    log('internal', 'Demo: status changed', { new: 'Customer not yet verified. The next Xcoins window starts with identity checks.', review: 'Early buys are checked by hand before they settle.', trusted: 'Buys settle straight away.' }[S.status], null);
+    render();
+  },
+  approve: () => {
+    const pend = S.orders.filter(o => o.status === 'IN_REVIEW');
+    if (!pend.length) return toast('No buys are waiting for review.');
+    pend.forEach(o => complete(o, 'An Xcoins operations agent approved the buy.'));
+    render();
+  },
+  cardProof: () => requestAction('CARD_PROOF', { reason: 'MANUAL_REVIEW' }, 'An Xcoins operations agent asked for proof that the card belongs to the customer.'),
+  aml: () => requestAction('AML_QUESTIONNAIRE', { reason: 'THRESHOLD_REACHED', threshold: '€2,000 in 30 days (example)' }, 'The customer crossed an AML threshold, so Xcoins needs a questionnaire before more buys.'),
+  runAuto: () => {
+    const list = S.autobuys.filter(a => a.active);
+    if (!list.length) return toast('No active autobuys. Ask FiCo to set one up first.');
+    list.forEach(a => {
+      log('internal', 'Autobuy run', `Xcoins runs the ${NAMES[a.asset]} autobuy on its own schedule. FiCo only hears about it through webhooks.`, null);
+      if (S.action) hook('ORDER:ON_HOLD', { autobuyId: a.id, reason: S.action.type }, 'The run is held until the customer answers what Xcoins asked for.');
+      else placeOrder(a.asset, a.eur, { source: 'Autobuy', autobuyId: a.id, pay: a.pay, dest: a.dest });
+    });
+    render();
+  },
+  reset: () => { if (S.sheet) { S.sheet = null; renderSheet(); } fresh(); boot(); },
+};
+
+function requestAction(type, data, note) {
+  if (S.action) return toast('Xcoins is already waiting for an answer from the customer.');
+  S.action = { type };
+  hook('ACTION:REQUIRED', { action: type, blocking: true, ...data }, note + ' FiCo tells the customer, who answers inside Xcoins.');
+}
+
+function toast(msg) {
+  const el = document.createElement('div'); el.className = 'toast'; el.textContent = msg;
+  $('#toasts').appendChild(el); setTimeout(() => el.remove(), 3200);
+}
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]');
+  if (el && act[el.dataset.act]) { e.preventDefault(); act[el.dataset.act](el); return; }
+  if (S.notifOpen && !e.target.closest('#notifs')) { S.notifOpen = false; renderBell(); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (S.sheet) closeSheet(); else if (S.notifOpen) { S.notifOpen = false; renderBell(); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'otp') { e.preventDefault(); act.confirm(); }
+});
+$('#askForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const v = $('#ask').value.trim(); if (!v) return;
+  $('#ask').value = ''; handleAsk(v);
+});
+
+function boot() { renderLog(); handleAsk('Buy €50 of bitcoin'); }
+fresh(); boot();
+</script>
