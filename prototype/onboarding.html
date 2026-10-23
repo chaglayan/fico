@@ -1,0 +1,395 @@
+<title>FiCo Onboarding</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one phone running the onboarding, a notes card beside it explaining each step. Direction B "Soft tiles". Single light look on purpose. */
+:root{
+  --page:#EFEEE9; --bg:#F7F6F2; --card:#FFFFFF; --tx:#232A24; --mu:#6D756C; --ln:#E4E2DA;
+  --ac:#232A24; --ok:#2F6B4F;
+  --t1:#E3F1E6; --t2:#FFF1C9; --t3:#ECE6FA; --t4:#FFE3DC; --t5:#DDEEF8;
+  --f:"Figtree", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--page);color:var(--tx);font:15px/1.5 var(--f);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--ok);outline-offset:2px}
+.wrap{max-width:1080px;margin:0 auto;display:grid;gap:24px}
+.intro{display:grid;gap:6px}
+.intro h1{margin:0;font-size:clamp(26px,3.6vw,34px);font-weight:800;letter-spacing:-.025em}
+.intro p{margin:0;color:var(--mu);max-width:66ch}
+.rail{display:flex;flex-wrap:wrap;gap:6px}
+.rail button{border:1px solid var(--ln);background:var(--bg);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--mu)}
+.rail button.seen{color:var(--tx)}
+.rail button[aria-current="step"]{background:var(--tx);border-color:var(--tx);color:#fff;font-weight:600}
+.stage{display:grid;grid-template-columns:minmax(0,360px) minmax(0,1fr);gap:36px;align-items:start}
+@media (max-width:820px){.stage{grid-template-columns:minmax(0,1fr)}.phone{margin-inline:auto}}
+
+/* ---------- Phone ---------- */
+.phone{width:100%;max-width:360px;height:740px;border-radius:46px;background:#fff;padding:9px;box-shadow:0 1px 0 rgba(0,0,0,.04),0 30px 60px -34px rgba(40,45,30,.45)}
+.scr{height:100%;border-radius:38px;background:var(--bg);overflow:hidden;display:flex;flex-direction:column;position:relative}
+.notch{width:96px;height:26px;border-radius:14px;background:#151815;margin:9px auto 0;flex-shrink:0}
+.view{flex:1;min-height:0;display:flex;flex-direction:column;padding:14px 22px 22px;gap:14px;overflow-y:auto;animation:in .28s ease-out}
+@keyframes in{from{opacity:0;transform:translateX(10px)}}
+.back{align-self:flex-start;background:none;border:0;padding:4px 0;color:var(--mu);font-size:14px;font-weight:600}
+.dots{display:flex;gap:5px;justify-content:center}
+.dots i{width:6px;height:6px;border-radius:3px;background:var(--ln)}
+.dots i.on{width:18px;background:var(--tx)}
+h2.t{margin:0;font-size:27px;line-height:1.12;font-weight:800;letter-spacing:-.025em;text-wrap:balance}
+.lead{margin:0;color:var(--mu);font-size:15px}
+.cta{margin-top:auto;background:var(--ac);color:#fff;border:0;border-radius:18px;padding:15px;font-weight:700;font-size:16px;width:100%}
+.cta:disabled{opacity:.35;cursor:not-allowed}
+.ghost{background:none;border:0;color:var(--mu);font-weight:600;font-size:14px;padding:6px}
+.alt{text-align:center}
+.shapes{position:relative;height:220px;margin:6px -4px 0;flex-shrink:0}
+.shapes i{position:absolute;border-radius:30px}
+.shapes .s1{left:6%;top:16%;width:44%;height:62%;background:var(--t1);transform:rotate(-8deg)}
+.shapes .s2{right:8%;top:2%;width:40%;height:50%;background:var(--t2);border-radius:50%}
+.shapes .s3{right:12%;bottom:0;width:46%;height:44%;background:var(--t3);transform:rotate(6deg)}
+.shapes .s4{left:36%;top:38%;width:30%;height:30%;background:var(--t4);border-radius:50%}
+.signin{display:grid;gap:10px;margin-top:auto}
+.sbtn{display:flex;align-items:center;justify-content:center;gap:10px;border-radius:16px;padding:14px;font-weight:700;border:1px solid var(--ln);background:var(--card)}
+.sbtn.dark{background:var(--tx);color:#fff;border-color:var(--tx)}
+.fine{font-size:12.5px;color:var(--mu);margin:0;text-align:center}
+.field{display:grid;gap:6px}
+.field input{border:1.5px solid var(--ln);background:var(--card);border-radius:16px;padding:15px 16px;font:600 20px var(--f);color:var(--tx)}
+.field input:focus{border-color:var(--tx);outline:none}
+.goals{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.goal{border:2px solid transparent;border-radius:22px;padding:14px 13px;text-align:left;display:grid;gap:4px;align-content:start;min-height:104px;position:relative}
+.goal b{font-size:15px;line-height:1.2;padding-right:20px}
+.goal span{font-size:12.5px;color:#4F574E;line-height:1.3}
+.goal[aria-pressed="true"]{border-color:var(--tx)}
+.goal[aria-pressed="true"]::after{content:"";position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;background:var(--tx) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12l4 4 8-8'/%3E%3C/svg%3E") center/12px no-repeat}
+.goal.w{grid-column:span 2;min-height:0}
+.promise{display:grid;gap:10px;background:var(--card);border-radius:20px;padding:14px}
+.promise div{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.promise .ic{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;flex-shrink:0}
+.search{border:1.5px solid var(--ln);background:var(--card);border-radius:14px;padding:11px 14px;font:500 15px var(--f);color:var(--tx);width:100%}
+.banks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.bank{background:var(--card);border:1.5px solid var(--ln);border-radius:16px;padding:11px 6px;display:grid;justify-items:center;gap:6px;font-size:12.5px;font-weight:600}
+.bank i{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;font-style:normal;font-weight:800;font-size:13px}
+.bank:hover{border-color:var(--tx)}
+.partner{font-size:12px;color:var(--mu);text-align:center;margin:0}
+/* Bank approval screen: deliberately not FiCo */
+.bankapp{flex:1;display:flex;flex-direction:column;background:#fff;animation:in .28s ease-out}
+.bankapp .bar{padding:14px 20px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #EEE;font-weight:700}
+.bankapp .bar i{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:800}
+.bankapp .bd{padding:20px;display:grid;gap:14px;flex:1;align-content:start;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.bankapp h3{margin:0;font-size:20px}
+.bankapp ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14.5px}
+.bankapp .meta{font-size:13px;color:#666;margin:0}
+.bankapp .acc{border:1px solid #E5E5E5;border-radius:12px;padding:12px;display:flex;justify-content:space-between;font-size:14px}
+.bankapp .go{margin:auto 20px 22px;border:0;border-radius:12px;padding:14px;font-weight:700;color:#fff}
+.bankapp .no{margin:-12px 20px 18px;background:none;border:0;color:#666;font-weight:600}
+.tag{align-self:center;font-size:11.5px;font-weight:700;background:#FFF1C9;color:#6B5200;border-radius:999px;padding:4px 10px;margin:10px auto 0}
+.reading{display:grid;gap:12px;margin-top:8px}
+.reading div{display:flex;gap:10px;align-items:center;font-size:15px;opacity:.3;transition:opacity .3s}
+.reading div.on{opacity:1}
+.reading .ck{width:22px;height:22px;border-radius:50%;background:var(--t1);display:grid;place-items:center}
+.tiles{display:grid;gap:10px}
+.tile{border-radius:22px;padding:14px;display:grid;gap:3px}
+.tile .k{font-size:12px;font-weight:700;opacity:.65}
+.tile .big{font-size:24px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tile .sm{font-size:13px;line-height:1.35}
+.opts{display:grid;gap:8px}
+.opt{display:flex;gap:12px;align-items:center;background:var(--card);border:2px solid transparent;border-radius:18px;padding:13px 14px;text-align:left}
+.opt[aria-pressed="true"]{border-color:var(--tx)}
+.opt .rd{width:20px;height:20px;border-radius:50%;border:2px solid var(--ln);flex-shrink:0}
+.opt[aria-pressed="true"] .rd{border:6px solid var(--tx)}
+.opt b{display:block;font-size:15px}
+.opt span{font-size:12.5px;color:var(--mu)}
+.toggle{display:flex;gap:12px;align-items:center;justify-content:space-between;background:var(--card);border-radius:18px;padding:13px 14px;font-size:14px}
+.sw{width:46px;height:28px;border-radius:14px;background:var(--ln);border:0;position:relative;flex-shrink:0}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.sw[aria-checked="true"]{background:var(--ok)}
+.sw[aria-checked="true"]::after{left:21px}
+/* Home */
+.home{flex:1;min-height:0;display:flex;flex-direction:column;animation:in .28s ease-out}
+.home .top{padding:12px 20px 4px}
+.home .hi{font-size:24px;font-weight:800;letter-spacing:-.02em}
+.home .date{font-size:13px;color:var(--mu)}
+.grid{padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;overflow-y:auto;flex:1;align-content:start}
+.grid .tile{min-width:0;align-content:start}
+.grid .w{grid-column:span 2}
+.pill{justify-self:start;margin-top:6px;background:#fff;border:0;border-radius:999px;padding:6px 12px;font-size:12.5px;font-weight:700}
+.tabs{display:flex;justify-content:space-around;padding:10px 8px 16px;font-size:11.5px;color:var(--mu);border-top:1px solid var(--ln);background:var(--bg)}
+.tabs .on{color:var(--tx);font-weight:800}
+.toast{position:absolute;left:14px;right:14px;bottom:70px;background:var(--tx);color:#fff;border-radius:14px;padding:11px 14px;font-size:14px;animation:in .2s ease-out}
+
+/* ---------- Notes ---------- */
+.notes{background:var(--bg);border:1px solid var(--ln);border-radius:24px;padding:24px;display:grid;gap:18px;min-width:0}
+.notes .n{font-size:13px;font-weight:700;color:var(--mu);letter-spacing:.06em;text-transform:uppercase}
+.notes h2{margin:-12px 0 0;font-size:24px;font-weight:800;letter-spacing:-.02em}
+.notes h3{margin:0 0 6px;font-size:13px;font-weight:700;color:var(--mu);letter-spacing:.06em;text-transform:uppercase}
+.notes p,.notes li{max-width:62ch}
+.notes p{margin:0}
+.notes ul{margin:0;padding-left:18px;display:grid;gap:4px}
+.meter{display:grid;gap:8px}
+.meter .row{display:flex;justify-content:space-between;font-size:14px;font-variant-numeric:tabular-nums}
+.meter .trk{height:10px;border-radius:5px;background:var(--ln);overflow:hidden;display:flex}
+.meter .trk i{height:100%}
+.chipline{display:flex;flex-wrap:wrap;gap:6px}
+.chipline span{font-size:12.5px;font-weight:600;border-radius:999px;padding:4px 10px}
+.c-none{background:var(--t1)}.c-call{background:var(--t5)}.c-bill{background:var(--t2)}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="intro">
+    <h1>FiCo onboarding</h1>
+    <p>Click through it on the phone. The card beside it explains what happens at each step, how long it takes the customer, and which steps cost money. Banks, names and figures are examples.</p>
+  </header>
+  <nav class="rail" id="rail" aria-label="Steps"></nav>
+  <div class="stage">
+    <div class="phone"><div class="scr" id="scr"></div></div>
+    <section class="notes" id="notes" aria-live="polite"></section>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const BANKS = [
+  ['N26', '#E3F7F2', '#13795B'], ['Revolut', '#E8ECFF', '#2B44C9'], ['ING', '#FFEBDD', '#C2500B'],
+  ['bunq', '#E9F8E3', '#3E8A1E'], ['Deutsche Bank', '#E3ECFA', '#1A3E8C'], ['BBVA', '#E0EDFA', '#0B4A8F'],
+  ['Santander', '#FDE5E5', '#B71C1C'], ['Sparkasse', '#FDE4E4', '#C6141B'], ['BNP Paribas', '#E2F3EA', '#11734B'],
+];
+const GOALS = [
+  ['spend', 'See where my money goes', 'Spending by category, month by month', 't1'],
+  ['subs', 'Find subscriptions', 'Every regular payment in one list', 't4'],
+  ['bills', 'Never miss a bill', 'A heads-up before money goes out', 't2'],
+  ['crypto', 'Start with crypto', 'Buy small amounts, with Xcoins', 't3'],
+  ['save', 'Save for something', 'Set a goal and watch it grow', 't5', true],
+];
+
+// Seconds are typical customer time; cost is what the step adds to FiCo's bill.
+const STEPS = [
+  { id: 'welcome', label: 'Welcome', secs: 5, cost: 'none',
+    title: 'Welcome',
+    what: 'One screen, one line about what FiCo does, one button.',
+    behind: ['Nothing yet. No account, no data.'] },
+  { id: 'account', label: 'Account', secs: 15, cost: 'none',
+    title: 'Create a FiCo account',
+    what: 'Sign in with Apple, Google or email. No password to invent.',
+    behind: ['FiCo creates its own account. There is no ID check here: FiCo only reads data and never moves money.', 'Xcoins checks ID later, and only if the customer chooses crypto.'] },
+  { id: 'name', label: 'Name', secs: 5, cost: 'none',
+    title: 'What should we call you?',
+    what: 'A first name, so FiCo can talk like a person.',
+    behind: ['Stored on the FiCo account.'] },
+  { id: 'goals', label: 'Goals', secs: 10, cost: 'none',
+    title: 'What do you want help with?',
+    what: 'Tap one or more tiles. Nothing is locked in.',
+    behind: ['FiCo uses the choices to order the home screen. Pick crypto and the crypto tile moves to the top.'] },
+  { id: 'connect', label: 'Pick bank', secs: 15, cost: 'call',
+    title: 'Connect a bank',
+    what: 'Read the three promises, pick a bank. Or skip and do it later.',
+    behind: ['FiCo asks the open banking provider (Tink, TrueLayer or similar) for a connection link for that bank. One API call.', 'Skipping is fine: the home screen then asks again, gently.'] },
+  { id: 'approve', label: 'Bank approves', secs: 45, cost: 'call',
+    title: 'Approve in the bank',
+    what: "The customer lands in their own bank's app, logs in the usual way and taps Approve. This is the slowest step, and how smooth it is depends on the bank.",
+    behind: ['The bank, not FiCo, shows this screen and does the strong authentication.', 'In the EU the approval lasts 180 days. After that the customer confirms again in a couple of taps.'] },
+  { id: 'reading', label: 'Reading', secs: 8, cost: 'bill',
+    title: 'Reading the last 90 days',
+    what: 'A short wait with something to watch.',
+    behind: ['FiCo fetches accounts, balances and recent transactions. Most banks give about 90 days; some give more on the first connection.', 'From here the customer counts as a connected user, which is what most providers charge for, monthly.', 'Sorting transactions into categories is either an add-on from the provider or something FiCo does itself.'] },
+  { id: 'look', label: 'First look', secs: 15, cost: 'none',
+    title: 'Your first look',
+    what: 'Three findings that are true for this customer. This is the moment FiCo earns its place on their phone.',
+    behind: ['Worked out from the transactions FiCo already has: totals by category, regular payments, and when salary arrives. No extra calls.', 'Bank data shows payments, not usage. FiCo can say "Disney+ costs €8.99 a month", not "you stopped watching".'] },
+  { id: 'checkins', label: 'Check-ins', secs: 10, cost: 'call',
+    title: 'How often should FiCo check in?',
+    what: 'Pick a rhythm and allow notifications.',
+    behind: ["To spot new payments, FiCo refreshes the customer's data in the background. In the EU a provider may do this up to 4 times a day without the customer opening the app.", 'Refresh frequency is the main running cost to tune. Once or twice a day is enough for a daily summary and bill warnings.'] },
+  { id: 'home', label: 'Home', secs: 0, cost: 'none',
+    title: 'Home',
+    what: 'The tiles follow the goals picked earlier.',
+    behind: ['Nothing exists at Xcoins yet. Tapping the crypto tile starts Xcoins sign-up inside the Xcoins window, which is the next thing to design.'] },
+];
+const COSTS = { none: ['c-none', 'No cost'], call: ['c-call', 'API call'], bill: ['c-bill', 'Billable: connected user'] };
+
+const S = { i: 0, seen: new Set([0]), name: 'Alex', goals: new Set(['spend', 'subs']), bank: null, skipped: false, checkin: 'weekly', lowbal: true, notif: false };
+
+function go(i) {
+  S.i = Math.max(0, Math.min(STEPS.length - 1, i));
+  S.seen.add(S.i);
+  render();
+}
+const next = () => go(S.i + 1);
+const at = id => STEPS.findIndex(s => s.id === id);
+
+function dots() {
+  const n = at('checkins') + 1;
+  return `<div class="dots" aria-hidden="true">${Array.from({ length: n }, (_, k) => `<i class="${k === Math.min(S.i, n - 1) ? 'on' : ''}"></i>`).join('')}</div>`;
+}
+const backBtn = () => `<button class="back" data-act="back">‹ Back</button>`;
+const bankOf = () => BANKS.find(b => b[0] === S.bank) || BANKS[0];
+
+function screen() {
+  const id = STEPS[S.i].id;
+  if (id === 'welcome') return `<div class="view">
+    <div class="shapes" aria-hidden="true"><i class="s1"></i><i class="s2"></i><i class="s3"></i><i class="s4"></i></div>
+    <h2 class="t">Money, minus the stress.</h2>
+    <p class="lead">FiCo keeps track of your accounts, bills and savings, and buys crypto for you when you ask.</p>
+    <button class="cta" data-act="next">Let's go</button>
+    <button class="ghost alt" data-act="next">I already have an account</button></div>`;
+
+  if (id === 'account') return `<div class="view">${backBtn()}${dots()}
+    <h2 class="t">Create your account</h2>
+    <p class="lead">Takes a few seconds. You won't need a password.</p>
+    <div class="signin">
+      <button class="sbtn dark" data-act="next"><svg width="16" height="18" viewBox="0 0 16 18" fill="currentColor" aria-hidden="true"><path d="M13.2 9.6c0-2 1.7-3 1.8-3.1-1-1.4-2.5-1.6-3-1.6-1.3-.1-2.5.8-3.2.8-.7 0-1.7-.8-2.8-.7C4.6 5 3.3 5.8 2.6 7.1c-1.5 2.6-.4 6.4 1 8.5.7 1 1.5 2.2 2.6 2.1 1-.1 1.4-.7 2.7-.7 1.2 0 1.6.7 2.7.6 1.1 0 1.8-1 2.5-2 .8-1.1 1.1-2.2 1.1-2.3 0 0-2-.8-2-3.7zM11.2 3.6c.6-.7 1-1.7.9-2.6-.8 0-1.9.6-2.5 1.3-.5.6-1 1.6-.9 2.5.9.1 1.9-.5 2.5-1.2z"/></svg>Continue with Apple</button>
+      <button class="sbtn" data-act="next"><svg width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h5.9c-.3 1.4-1 2.5-2.2 3.3v2.7h3.6c2-1.9 3.2-4.7 3.2-8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.8c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.8C3.9 20.5 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.8 14.1c-.2-.7-.4-1.4-.4-2.1s.1-1.4.4-2.1V7.1H2.1C1.4 8.6 1 10.2 1 12s.4 3.4 1.1 4.9l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2C17.5 2.1 15 1 12 1 7.7 1 3.9 3.5 2.1 7.1l3.7 2.8C6.7 7.3 9.1 5.4 12 5.4z"/></svg>Continue with Google</button>
+      <button class="sbtn" data-act="next">Continue with email</button>
+      <p class="fine">By continuing you agree to FiCo's terms and privacy policy.</p>
+    </div></div>`;
+
+  if (id === 'name') return `<div class="view">${backBtn()}${dots()}
+    <h2 class="t">What should we call you?</h2>
+    <label class="field"><span class="lead">First name</span><input id="nm" value="${esc(S.name)}" autocomplete="given-name" maxlength="30"></label>
+    <button class="cta" data-act="saveName">Continue</button></div>`;
+
+  if (id === 'goals') return `<div class="view">${backBtn()}${dots()}
+    <h2 class="t">Nice to meet you, ${esc(S.name)}. What can FiCo help with?</h2>
+    <p class="lead">Pick as many as you like.</p>
+    <div class="goals">${GOALS.map(([k, t, d, c, w]) => `<button class="goal ${w ? 'w' : ''}" style="background:var(--${c})" data-act="goal" data-k="${k}" aria-pressed="${S.goals.has(k)}"><b>${t}</b><span>${d}</span></button>`).join('')}</div>
+    <button class="cta" data-act="next" ${S.goals.size ? '' : 'disabled'}>Continue</button></div>`;
+
+  if (id === 'connect') return `<div class="view">${backBtn()}${dots()}
+    <h2 class="t">Connect your main bank</h2>
+    <div class="promise">
+      <div><span class="ic" style="background:var(--t1)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2F6B4F" stroke-width="2.4" stroke-linecap="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span><span><b>FiCo can only look.</b> It can't move your money.</span></div>
+      <div><span class="ic" style="background:var(--t2)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#7A5C00" stroke-width="2.4" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/></svg></span><span><b>You approve it in your bank's app</b>, the same way you log in.</span></div>
+      <div><span class="ic" style="background:var(--t4)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A3442C" stroke-width="2.4" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span><span><b>Disconnect any time</b> in Settings.</span></div>
+    </div>
+    <input class="search" placeholder="Search for your bank" aria-label="Search for your bank">
+    <div class="banks">${BANKS.map(([n, bg, fg]) => `<button class="bank" data-act="bank" data-n="${n}"><i style="background:${bg};color:${fg}">${n.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}</i>${n}</button>`).join('')}</div>
+    <p class="partner">Connection by our licensed open banking partner</p>
+    <button class="ghost alt" data-act="skip">Skip for now</button></div>`;
+
+  if (id === 'approve') {
+    const [n, bg, fg] = bankOf();
+    return `<span class="tag">This is ${esc(n)}'s app, not FiCo</span><div class="bankapp">
+      <div class="bar"><i style="background:${bg};color:${fg}">${n.slice(0, 2).toUpperCase()}</i>${esc(n)}</div>
+      <div class="bd">
+        <h3>FiCo wants to see your account</h3>
+        <ul><li>Account name and balance</li><li>Transactions from the last 90 days</li><li>New transactions as they happen</li></ul>
+        <div class="acc"><span>Main account<br><span class="meta">DE89 •••• 4127</span></span><span>✓</span></div>
+        <p class="meta">Access lasts 180 days. FiCo can't make payments.</p>
+      </div>
+      <button class="go" style="background:${fg}" data-act="next">Approve</button>
+      <button class="no" data-act="back">Cancel</button></div>`;
+  }
+
+  if (id === 'reading') return `<div class="view">${dots()}
+    <h2 class="t">Getting to know your money…</h2>
+    <div class="reading" id="reading">
+      ${['Found your main account', 'Read 412 transactions', 'Sorted them into categories', 'Spotted 5 regular payments', 'Found your payday'].map(t => `<div><span class="ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2F6B4F" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>${t}</div>`).join('')}
+    </div>
+    <button class="cta" data-act="next" id="readDone" disabled>See what I found</button></div>`;
+
+  if (id === 'look') return `<div class="view">${backBtn()}${dots()}
+    <h2 class="t">Here's your first look, ${esc(S.name)}</h2>
+    <div class="tiles">
+      <div class="tile" style="background:var(--t1)"><div class="k">Spent in September</div><div class="big">€1,550</div><div class="sm">Groceries was the biggest part: €412.</div></div>
+      <div class="tile" style="background:var(--t4)"><div class="k">Regular payments</div><div class="big">€61.96 a month</div><div class="sm">5 subscriptions, including Disney+ at €8.99. Still using them all?</div></div>
+      <div class="tile" style="background:var(--t2)"><div class="k">Payday</div><div class="big">Around the 25th</div><div class="sm">Usually €2,840 from Brightwell GmbH.</div></div>
+    </div>
+    <button class="cta" data-act="next">Looks right</button></div>`;
+
+  if (id === 'checkins') return `<div class="view">${backBtn()}${dots()}
+    <h2 class="t">How often should FiCo check in?</h2>
+    <div class="opts">
+      ${[['weekly', 'A weekly summary', 'Sunday evening, two minutes to read'], ['important', 'Only when it matters', 'Bills, unusual payments, low balance'], ['daily', 'Every morning', 'A short note with yesterday’s spending']].map(([k, t, d]) => `<button class="opt" data-act="checkin" data-k="${k}" aria-pressed="${S.checkin === k}"><span class="rd"></span><span><b>${t}</b><span>${d}</span></span></button>`).join('')}
+    </div>
+    <div class="toggle"><span>Warn me before a bill if my balance looks low</span><button class="sw" role="switch" aria-checked="${S.lowbal}" aria-label="Low balance warning" data-act="lowbal"></button></div>
+    <button class="cta" data-act="notif">Turn on notifications</button>
+    <button class="ghost alt" data-act="next">Not now</button></div>`;
+
+  // home
+  const crypto = S.goals.has('crypto');
+  const tiles = [];
+  const cryptoTile = `<div class="tile w" style="background:var(--t3)"><div class="k">Crypto with Xcoins</div><div class="big">${crypto ? 'Buy your first €10' : 'When you’re ready'}</div><div class="sm">${crypto ? 'Xcoins checks your ID once, about 3 minutes. Then buying takes a tap.' : 'Buy small amounts of bitcoin or ether. Xcoins looks after it for you.'}</div><button class="pill" data-act="soon">${crypto ? 'Get started' : 'Learn more'}</button></div>`;
+  if (crypto) tiles.push(cryptoTile);
+  if (S.skipped) tiles.push(`<div class="tile w" style="background:var(--t1)"><div class="k">Your spending</div><div class="big">Connect a bank</div><div class="sm">See where your money goes and find subscriptions you forgot about.</div><button class="pill" data-act="toConnect">Connect</button></div>`);
+  else tiles.push(
+    `<div class="tile w" style="background:var(--t1)"><div class="k">Spent this month</div><div class="big">€1,240</div><div class="sm">€310 less than this time in September.</div></div>`,
+    `<div class="tile" style="background:var(--t2)"><div class="k">Payday</div><div class="big">2 days</div><div class="sm">€2,840 expected</div></div>`,
+    `<div class="tile" style="background:var(--t4)"><div class="k">Subscriptions</div><div class="big">€61.96</div><div class="sm">5 a month</div><button class="pill" data-act="soon">Review</button></div>`);
+  if (S.goals.has('save')) tiles.push(`<div class="tile w" style="background:var(--t5)"><div class="k">Savings goal</div><div class="big">Set one up</div><div class="sm">Tell FiCo what you're saving for.</div><button class="pill" data-act="soon">Start</button></div>`);
+  if (!crypto) tiles.push(cryptoTile);
+  const d = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
+  return `<div class="home"><div class="top"><div class="hi">Hey ${esc(S.name)}</div><div class="date">${d}</div></div>
+    <div class="grid">${tiles.join('')}</div>
+    <div class="tabs"><span class="on">Home</span><span>Money</span><span>Crypto</span><span>Ask</span></div></div>`;
+}
+
+function notes() {
+  const s = STEPS[S.i];
+  const doneSecs = STEPS.slice(0, S.i + 1).reduce((a, x) => a + x.secs, 0);
+  const total = STEPS.reduce((a, x) => a + x.secs, 0);
+  const [cc, cl] = COSTS[s.cost];
+  const fmt = x => x >= 60 ? `${Math.floor(x / 60)} min ${x % 60 ? (x % 60) + ' s' : ''}` : `${x} s`;
+  return `<div class="n">Step ${S.i + 1} of ${STEPS.length}</div>
+    <h2>${s.title}</h2>
+    <div><h3>The customer</h3><p>${s.what}</p></div>
+    <div><h3>Behind the scenes</h3><ul>${s.behind.map(b => `<li>${b}</li>`).join('')}</ul></div>
+    <div class="chipline"><span class="${cc}">${cl}</span>${s.secs ? `<span class="c-none">About ${fmt(s.secs)} of the customer's time</span>` : ''}</div>
+    <div class="meter"><h3>Customer time so far</h3>
+      <div class="row"><span>${fmt(doneSecs)}</span><span class="muted">of about ${fmt(total)} in total</span></div>
+      <div class="trk" aria-hidden="true">${STEPS.map((x, k) => `<i style="width:${x.secs / total * 100}%;background:${k <= S.i ? (x.id === 'approve' ? '#E9B949' : 'var(--tx)') : 'transparent'};${k ? 'border-left:2px solid var(--bg)' : ''}"></i>`).join('')}</div>
+      <p style="font-size:13px;color:var(--mu)">The yellow block is the bank approval, the longest part. It's outside FiCo's control.</p>
+    </div>`;
+}
+
+function render() {
+  $('#scr').innerHTML = `<div class="notch"></div>` + screen();
+  $('#notes').innerHTML = notes();
+  $('#rail').innerHTML = STEPS.map((s, k) => `<button data-act="jump" data-i="${k}" class="${S.seen.has(k) ? 'seen' : ''}" ${k === S.i ? 'aria-current="step"' : ''}>${k + 1}. ${s.label}</button>`).join('');
+  if (STEPS[S.i].id === 'reading') animateReading();
+}
+
+let readTimer;
+function animateReading() {
+  clearTimeout(readTimer);
+  const rows = [...document.querySelectorAll('#reading div')];
+  let k = 0;
+  const tick = () => {
+    if (STEPS[S.i].id !== 'reading') return;
+    if (k < rows.length) { rows[k++].classList.add('on'); readTimer = setTimeout(tick, 520); }
+    else { const b = $('#readDone'); if (b) b.disabled = false; }
+  };
+  readTimer = setTimeout(tick, 300);
+}
+
+function toast(msg) {
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  $('#scr').appendChild(t); setTimeout(() => t.remove(), 2600);
+}
+
+const act = {
+  next, back: () => go(STEPS[S.i].id === 'look' ? at('connect') : S.i - 1),
+  jump: el => go(+el.dataset.i),
+  saveName: () => { const v = $('#nm').value.trim(); S.name = v || 'there'; next(); },
+  goal: el => { const k = el.dataset.k; S.goals.has(k) ? S.goals.delete(k) : S.goals.add(k); render(); },
+  bank: el => { S.bank = el.dataset.n; S.skipped = false; next(); },
+  skip: () => { S.skipped = true; go(at('checkins')); },
+  toConnect: () => go(at('connect')),
+  checkin: el => { S.checkin = el.dataset.k; render(); },
+  lowbal: () => { S.lowbal = !S.lowbal; render(); },
+  notif: () => { S.notif = true; next(); },
+  soon: () => toast('Crypto and the other screens come in the next round.'),
+};
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]');
+  if (el && act[el.dataset.act] && !el.disabled) { e.preventDefault(); act[el.dataset.act](el); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'nm') { e.preventDefault(); act.saveName(); }
+});
+render();
+</script>
