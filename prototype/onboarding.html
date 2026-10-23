@@ -198,6 +198,30 @@ h2.t{margin:0;font-size:27px;line-height:1.12;font-weight:800;letter-spacing:-.0
 .fback{position:absolute;inset:0;background:rgba(20,24,20,.35);z-index:4}
 .fsheet{position:absolute;left:0;right:0;bottom:0;z-index:5;background:#fff;border-radius:26px 26px 0 0;padding:18px 16px 20px;display:grid;gap:8px;animation:in .2s ease-out;--xt:#1F2430;--xm:#6B7180;--xl:#ECEDF1}
 .fsheet h3{margin:0 0 4px;font-size:19px;font-weight:800}
+.xc{position:relative}
+.swap{display:grid;gap:8px}
+.sw1{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 10px;background:#F4F5F8;border-radius:14px;padding:10px 12px}
+.sw1>span{grid-column:1/-1;font-size:12.5px;color:var(--xm);font-weight:600}
+.sw1 input,.sw1 output{border:0;background:none;font:700 24px var(--f);color:var(--xt);width:100%;min-width:0;padding:0;font-variant-numeric:tabular-nums}
+.sw1 input:focus{outline:none}
+.cur{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--xl);border-radius:10px;padding:6px 10px;font:700 13.5px var(--f);color:var(--xt);white-space:nowrap}
+.cur.big{justify-self:start;align-self:flex-start;padding:9px 12px}
+.cico{width:20px;height:20px;border-radius:50%;display:inline-grid;place-items:center;color:#fff;font:800 11px var(--f);font-style:normal;flex-shrink:0}
+.xerr{color:#B3261E!important;font-size:13px!important}
+.pick{position:absolute;left:0;right:0;bottom:0;top:12%;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -12px 40px -12px rgba(0,0,0,.3);display:flex;flex-direction:column;gap:10px;padding:16px 14px 0;z-index:3;animation:in .2s ease-out}
+.pickh{display:flex;justify-content:space-between;align-items:center}
+.pickh b{font-size:17px}
+.pickh button{background:none;border:0;font-size:18px;padding:4px 8px}
+.pick ul{list-style:none;margin:0;padding:0 0 14px;overflow-y:auto;flex:1;min-height:0}
+.pick li button{width:100%;display:flex;gap:12px;align-items:center;background:none;border:0;border-radius:12px;padding:8px 10px;text-align:left}
+.pick li button.sel{background:#EEF3FF}
+.pick li button:hover{background:#F6F7F9}
+.pick li b{display:block;font-size:14.5px}
+.pick li small{font-size:12px;color:var(--xm)}
+.pick .cico{width:28px;height:28px;font-size:13px}
+.addr{display:grid;justify-items:center;gap:10px;background:#F7F7F9;border-radius:16px;padding:16px}
+.addr code{font-size:12.5px;word-break:break-all;text-align:center;color:var(--xt)}
+.qr{width:112px;height:112px;border-radius:8px;background:repeating-conic-gradient(#1F2430 0 25%,#fff 0 50%) 0 0/16px 16px;border:6px solid #fff;box-shadow:0 0 0 1px var(--xl)}
 .way b{display:block;font-size:14.5px}
 .way span span{font-size:12.5px;color:var(--xm)}
 .way .badge{margin-left:auto;font-size:11px;font-weight:800;background:#E3F1E6;color:#2F6B4F;border-radius:999px;padding:3px 8px;white-space:nowrap}
@@ -331,8 +355,8 @@ const STEPS = [
     behind: ['Xcoins tells FiCo the money arrived. (Proposed: DEPOSIT:RECEIVED.)', 'Regular top-ups without approving each one: a standing order the customer sets up in their own bank. FiCo shows the details to copy. No integration, works today.'] },
   { id: 'buy', part: 'crypto', label: 'Buy', secs: 15, cost: 'none', who: 'Xcoins',
     title: 'Buy crypto',
-    what: 'Pick a coin and an amount, choose how to pay, tap Buy. No code needed.',
-    behind: ['Payment methods are Xcoins’: the euro balance (instant, lowest fee) or a card.', 'FiCo can open this with the coin and amount filled in, as a signed preset. (Proposed.)', 'No SMS code on buys. Xcoins asks for one before withdrawals.', 'Amounts and fees here are examples. Minimums and limits come from Xcoins.'] },
+    what: 'I send / I buy, like the Xcoins widget today: type an amount, pick a coin from the full list, choose how to pay, tap Buy. No code needed. Minimum €20.',
+    behind: ['Payment methods are Xcoins’: the euro balance (instant, lowest fee) or a card.', 'FiCo can open this with the coin and amount filled in, as a signed preset. (Proposed.)', 'No SMS code on buys. Xcoins asks for one before withdrawals.', 'Prices differ by customer, so FiCo never shows a price of its own; it shows the Xcoins quote. Prices and fees here are examples.'] },
   { id: 'bought', part: 'crypto', label: 'Done', secs: 10, cost: 'none', who: 'Xcoins',
     title: 'Bought',
     what: 'First buys are checked by the Xcoins team, then go through on their own.',
@@ -354,17 +378,32 @@ const CATS = [['Rent', 650], ['Groceries', 412], ['Eating out', 186], ['Transpor
 const SUBS = [['FitX gym', 25, '1 Nov'], ['Netflix', 13.99, '4 Nov'], ['Spotify', 10.99, '9 Nov'], ['Disney+', 8.99, '14 Nov'], ['iCloud+', 2.99, '18 Nov']];
 const PAYS = [['25 Aug', 2840], ['25 Sep', 2840], ['25 Oct', 2840, true]];
 const eur = n => '€' + n.toLocaleString('en-IE', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
-const PRICES = { BTC: 98500, ETH: 3420 }, NAMES = { BTC: 'Bitcoin', ETH: 'Ether' };
+// The Xcoins coin list. Prices are examples; real prices differ by customer.
+const COINS = [
+  ['BTC', 'Bitcoin', 'Bitcoin', 98500, '#F7931A'], ['ETH', 'Ethereum', 'Ethereum', 3420, '#627EEA'],
+  ['LTC', 'Litecoin', 'Litecoin', 82, '#345D9D'], ['USDC', 'USD Coin', 'Ethereum', 0.92, '#2775CA'],
+  ['XRP', 'Ripple', 'Ripple', 2.1, '#23292F'], ['DOGE', 'Dogecoin', 'Dogecoin', 0.16, '#C2A633'],
+  ['ADA', 'Cardano', 'Cardano', 0.62, '#0033AD'], ['TRX', 'Tron', 'Tron', 0.24, '#EB0029'],
+  ['BNB', 'Binance Coin', 'Binance Smart Chain', 590, '#C99400'], ['SOL', 'Solana', 'Solana', 165, '#9945FF'],
+  ['BCH', 'Bitcoin Cash', 'Bitcoin Cash', 420, '#0AC18E'], ['SHIB', 'Shiba Inu', 'Ethereum', 0.000021, '#E42D04'],
+];
+const PRICES = {}, NAMES = {}, NETS = {}, COLS = {};
+COINS.forEach(([c, n, net, pr, col]) => { PRICES[c] = pr; NAMES[c] = n; NETS[c] = net; COLS[c] = col; });
+const MIN_EUR = 20;
+const dec = c => PRICES[c] >= 1000 ? 6 : PRICES[c] >= 10 ? 4 : PRICES[c] >= 0.1 ? 2 : 0;
+const fmtC = (v, c) => v.toLocaleString('en-IE', { minimumFractionDigits: Math.min(dec(c), 2), maximumFractionDigits: dec(c) }) + ' ' + c;
+const cico = c => `<i class="cico" style="background:${COLS[c]}">${c[0]}</i>`;
+const held = () => COINS.map(c => c[0]).filter(c => S.hold[c] > 0);
 const fee = () => S.pay === 'card' ? 0.029 : 0.015;
 
 const S = { i: 0, seen: new Set([0]), name: 'Alex', goals: new Set(['spend', 'subs', 'crypto']), bank: null, skipped: false, checkin: 'weekly', lowbal: true, notif: false,
-  open: {}, doc: 'id', front: false, back: false, live: 0, verified: false, topup: 250, cash: 0, hold: { BTC: 0, ETH: 0 }, coin: 'BTC', buyAmt: 100, pay: 'cash', fueled: false, cardPath: false, bought: false, standing: false, sheet: null };
+  open: {}, doc: 'id', front: false, back: false, live: 0, verified: false, topup: 250, cash: 0, hold: Object.fromEntries(COINS.map(c => [c[0], 0])), coin: 'BTC', buyAmt: 100, picker: false, flow: null, sellCoin: null, sellAmt: 0, wdAmt: 100, depCoin: 'BTC', own: 'me', pay: 'cash', fueled: false, cardPath: false, bought: false, standing: false, sheet: null };
 
 function go(i) {
   S.i = Math.max(0, Math.min(STEPS.length - 1, i));
   S.seen.add(S.i);
   const id = STEPS[S.i].id;
-  S.sheet = null;
+  S.sheet = null; S.flow = null; S.picker = false;
   if (['arrived', 'buy', 'bought', 'home2', 'wallet'].includes(id) && !S.fueled && !S.cardPath) { S.cash += S.topup; S.fueled = true; }
   if (['bought', 'home2', 'wallet'].includes(id)) buy();
   if (id === 'home2' || id === 'wallet') S.reviewDone = true;
@@ -571,20 +610,7 @@ function screen() {
       <button class="more" data-act="standing">${S.standing ? 'Hide details' : 'Show the details'}</button></div>
     <button class="cta" data-act="next">Buy crypto</button></div>`;
 
-  if (id === 'buy') {
-    if (S.pay === 'cash' && S.cash < S.buyAmt) S.pay = 'card';
-    const got = S.buyAmt * (1 - fee()) / PRICES[S.coin];
-    return xc(`<h2>Buy crypto</h2>
-      <div class="doct">${['BTC', 'ETH'].map(c => `<button data-act="coin" data-k="${c}" aria-pressed="${S.coin === c}">${NAMES[c]}</button>`).join('')}</div>
-      <div class="doct">${[50, 100, 250].map(v => `<button data-act="buyAmt" data-v="${v}" aria-pressed="${S.buyAmt === v}">€${v}</button>`).join('')}<button data-act="soon">Other</button></div>
-      <div class="ways">
-        <button class="way" data-act="payWith" data-k="cash" aria-pressed="${S.pay === 'cash'}" ${S.cash < S.buyAmt ? 'disabled' : ''}><span><b>Euro balance</b><span>${eur(S.cash)} available · instant, lowest fee</span></span></button>
-        <button class="way" data-act="payWith" data-k="card" aria-pressed="${S.pay === 'card'}"><span><b>Debit or credit card</b><span>Higher fee</span></span></button>
-      </div>
-      <div class="iban"><div class="r"><span>You pay</span><span>€${S.buyAmt}.00</span></div><div class="r"><span>Fee, ${(fee() * 100).toFixed(1)}% (example)</span><span>€${(S.buyAmt * fee()).toFixed(2)}</span></div><div class="r"><span>Price (example)</span><span>${eur(PRICES[S.coin])}</span></div><div class="r"><span>You get</span><span>≈ ${got.toFixed(S.coin === 'BTC' ? 6 : 5)} ${S.coin}</span></div></div>
-      <div class="risk">Crypto prices go up and down. You could lose the money you put in.</div>
-      <button class="xbtn" data-act="next">Buy ${NAMES[S.coin].toLowerCase()}</button>`);
-  }
+  if (id === 'buy') return xc(buyForm('next'));
 
   if (id === 'bought') return xc(S.reviewDone
     ? `<div class="okdot">${tick}</div><h2 style="text-align:center">Done</h2><p style="text-align:center">${holdText()} is in your Xcoins account, and ${eur(S.cash)} is left in euros.</p><button class="xbtn" data-act="next">Back to FiCo</button>`
@@ -594,23 +620,23 @@ function screen() {
     const val = Object.entries(S.hold).reduce((a, [c, v]) => a + v * PRICES[c], 0);
     const IC = { buy: '<path d="M12 5v14M5 12h14"/>', sell: '<path d="M5 12h14"/>', deposit: '<path d="M12 4v13M6 11l6 6 6-6M5 20h14"/>', withdraw: '<path d="M12 20V7M6 13l6-6 6 6M5 4h14"/>' };
     const SH = {
-      buy: ['Buy', [['With your euro balance', `${eur(S.cash)} available. Instant, lowest fee.`], ['With a card', 'Higher fee.']]],
-      sell: ['Sell', [['Crypto for euros', 'The euros land in your Xcoins balance.'], ['Then send them to ' + bn, 'Optional, in the same flow.']]],
-      deposit: ['Deposit', [['Euros from ' + bn + ', through FiCo', 'Arrives in seconds.'], ['Euros by bank transfer', 'To your Xcoins IBAN, from any bank.'], ['Crypto from another wallet', 'Show my bitcoin or ether address.']]],
-      withdraw: ['Withdraw', [['Euros to ' + bn, 'To your own account. SMS code needed.'], ['Crypto to a wallet', 'To an address you choose. SMS code needed.']]],
+      buy: ['Buy'], sell: ['Sell'],
+      deposit: ['Deposit', [['depFico', 'Euros from ' + bn + ', through FiCo', 'Arrives in seconds.'], ['depIban', 'Euros by bank transfer', 'To your Xcoins IBAN, from any bank in your name.'], ['depCrypto', 'Crypto from another wallet', 'Show my deposit address.']]],
+      withdraw: ['Withdraw', [['wdEur', 'Euros to ' + bn, 'To your own account. SMS code needed.'], ['wdCrypto', 'Crypto to a wallet', 'To an address you choose. SMS code needed.']]],
     };
+    if (S.flow) return flowScreen(xc, tick, bn, bbg, bfg, full, IBAN);
     const sh = S.sheet && SH[S.sheet];
     return `<div class="home"><div class="top"><div class="hi">Crypto</div><div class="date">With Xcoins</div></div>
       <div class="grid" style="grid-template-columns:1fr">
         <div class="tile" style="background:var(--t3)"><div class="k">Total at Xcoins</div><div class="big">${eur(+(S.cash + val).toFixed(2))}</div><div class="sm">Crypto ${eur(+val.toFixed(2))} · euros ${eur(S.cash)}</div></div>
-        <div class="acts">${Object.keys(IC).map(k => `<button class="act" data-act="sheet" data-k="${k}"><i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg></i>${SH[k][0]}</button>`).join('')}</div>
+        <div class="acts">${Object.keys(IC).map(k => `<button class="act" data-act="${k === 'buy' || k === 'sell' ? 'flow' : 'sheet'}" data-k="${k}"><i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg></i>${SH[k][0]}</button>`).join('')}</div>
         <ul class="assets">
           <li><span><b>Euro</b><br><span class="muted">Xcoins balance</span></span><span>${eur(S.cash)}</span></li>
-          ${Object.entries(S.hold).filter(([, v]) => v > 0).map(([c, v]) => `<li><span><b>${NAMES[c]}</b><br><span class="muted">${v.toFixed(c === 'BTC' ? 6 : 5)} ${c}</span></span><span>${eur(+(v * PRICES[c]).toFixed(2))}</span></li>`).join('')}
+          ${Object.entries(S.hold).filter(([, v]) => v > 0).map(([c, v]) => `<li><span><b>${NAMES[c]}</b><br><span class="muted">${fmtC(v, c)}</span></span><span style="display:flex;align-items:center;gap:8px">${eur(+(v * PRICES[c]).toFixed(2))}${cico(c)}</span></li>`).join('')}
         </ul>
       </div>
       <div class="tabs"><span>Home</span><span>Money</span><span class="on">Crypto</span><span>Ask</span></div>
-      ${sh ? `<div class="fback" data-act="sheet" data-k=""></div><div class="fsheet" role="dialog" aria-label="${sh[0]}"><h3>${sh[0]}</h3>${sh[1].map(([t, d]) => `<button class="way" data-act="soon"><span><b>${esc(t)}</b><span>${d}</span></span></button>`).join('')}<button class="xghost" data-act="sheet" data-k="">Close</button></div>` : ''}
+      ${sh ? `<div class="fback" data-act="sheet" data-k=""></div><div class="fsheet" role="dialog" aria-label="${sh[0]}"><h3>${sh[0]}</h3>${sh[1].map(([f, t, d]) => `<button class="way" data-act="flow" data-k="${f}"><span><b>${esc(t)}</b><span>${d}</span></span></button>`).join('')}<button class="xghost" data-act="sheet" data-k="">Close</button></div>` : ''}
     </div>`;
   }
 
@@ -635,6 +661,13 @@ function screen() {
 }
 
 function notes() {
+  if (S.flow && FLOWNOTES[S.flow.k]) {
+    const [t, who, what, behind] = FLOWNOTES[S.flow.k];
+    return `<div class="n">Crypto tab · after onboarding</div><h2>${t}</h2>
+      <div class="chipline"><span class="who w-${who}">On screen: ${who}</span></div>
+      <div><h3>The customer</h3><p>${what}</p></div>
+      <div><h3>Behind the scenes</h3><ul>${behind.map(b => `<li>${b}</li>`).join('')}</ul></div>`;
+  }
   const s = STEPS[S.i];
   const part = STEPS.filter(x => x.part === s.part);
   const pi = part.indexOf(s);
@@ -685,9 +718,134 @@ function animateReading() {
 }
 
 function holdText() {
-  const h = Object.entries(S.hold).filter(([, v]) => v > 0).map(([c, v]) => `${v.toFixed(c === 'BTC' ? 6 : 5)} ${c}`);
-  return h.length ? h.join(' and ') : 'No crypto yet';
+  const h = held().map(c => fmtC(S.hold[c], c));
+  return h.length ? h.join(', ') : 'No crypto yet';
 }
+
+// Coin picker inside the Xcoins window. `only` limits it to coins the customer holds.
+function picker(only) {
+  const list = only ? COINS.filter(c => only.includes(c[0])) : COINS;
+  return `<div class="pick" role="dialog" aria-label="Select cryptocurrency"><div class="pickh"><b>Select cryptocurrency</b><button data-act="pickCoin" aria-label="Close">✕</button></div>
+    <input id="coinSearch" class="search" placeholder="Search" aria-label="Search coins">
+    <ul>${list.map(([c, n, net]) => `<li data-s="${(c + ' ' + n).toLowerCase()}"><button data-act="setCoin" data-k="${c}" class="${c === S.pickFor() ? 'sel' : ''}">${cico(c)}<span><b>${n}</b><small>${c} · ${net}</small></span></button></li>`).join('')}</ul></div>`;
+}
+S.pickFor = () => S.picker === 'sell' || S.picker === 'wd' ? S.sellCoin : S.picker === 'dep' ? S.depCoin : S.coin;
+
+function buyForm(doneAct) {
+  const a = S.buyAmt, ok = a >= MIN_EUR;
+  if (S.pay === 'cash' && S.cash < a) S.pay = 'card';
+  const got = ok ? a * (1 - fee()) / PRICES[S.coin] : 0;
+  return `<h2>Buy crypto</h2>
+    <div class="swap">
+      <label class="sw1"><span>I send</span><input id="sendAmt" inputmode="decimal" value="${a}"><b class="cur">EUR</b></label>
+      <div class="sw1"><span>I buy</span><output id="getAmt">${fmtC(got, S.coin)}</output><button class="cur" data-act="pickCoin" data-k="buy">${cico(S.coin)}${S.coin} ▾</button></div>
+    </div>
+    <p class="xerr" id="minErr" ${ok ? 'hidden' : ''}>The minimum is €${MIN_EUR}.</p>
+    <div class="ways">
+      <button class="way" data-act="payWith" data-k="cash" aria-pressed="${S.pay === 'cash'}" ${S.cash < a ? 'disabled' : ''}><span><b>Euro balance</b><span>${eur(S.cash)} available · instant, lowest fee</span></span></button>
+      <button class="way" data-act="payWith" data-k="card" aria-pressed="${S.pay === 'card'}"><span><b>Debit or credit card</b><span>Higher fee</span></span></button>
+    </div>
+    <div class="iban"><div class="r"><span>Your price (example)</span><span>${eur(PRICES[S.coin])} per ${S.coin}</span></div><div class="r"><span>Fee, ${(fee() * 100).toFixed(1)}% (example)</span><span id="feeAmt">€${(a * fee()).toFixed(2)}</span></div></div>
+    <div class="risk">Crypto prices go up and down. You could lose the money you put in.</div>
+    <button class="xbtn" id="buyBtn" data-act="${doneAct}" ${ok ? '' : 'disabled'}>Buy ${NAMES[S.coin]}</button>
+    ${S.picker === 'buy' ? picker() : ''}`;
+}
+
+const depAddr = c => ({ BTC: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh', LTC: 'ltc1q8c6fshw2dlwun7ekn9qwf37cu2rn755upcp6el', XRP: 'rDsbeomae4FXwgQTJp9Rs64Qg9vYgM4b2y', DOGE: 'D8vFz4p1L37jdg47HXKtSHA5uYLYxbGgPD', ADA: 'addr1qx2fxv2umyhttkxyxp8x0dlpdt3k6cwng5pxj3jhsydzer', TRX: 'TNPeeaaFB7K9cmo4uQpcU32zGK8G1NYqeL', SOL: '7EcDhSYGxXyscszYEp35KHN8vvw3svAuLKTzXwCFLtV', BCH: 'qpm2qsznhks23z7629mms6s4cwef74vcwvy22gdx6a' }[c] || '0x71C7656EC7ab88b098defB751B7401B5f6d8976F');
+
+// Screens for the Crypto tab's actions. Each flow is a short list of screens; S.flow.s is the current one.
+function flowScreen(xc, tick, bn, bbg, bfg, full, IBAN) {
+  const f = S.flow, done = (title, body) => `<div class="okdot">${tick}</div><h2 style="text-align:center">${title}</h2><p style="text-align:center">${body}</p><button class="xbtn" data-act="flowEnd">Back to Crypto</button>`;
+  const fico = inner => `<div class="view"><button class="back" data-act="flowEnd">‹ Crypto</button>${inner}</div>`;
+  if (f.k === 'buy') return xc(f.s ? done('Bought', `${fmtC(f.got, f.coin)} is in your Xcoins account.`) : buyForm('flowBuy'));
+
+  if (f.k === 'sell') {
+    if (f.s) return xc(done('Sold', `${eur(f.got)} is in your euro balance. You can buy again or withdraw it to ${esc(bn)}.`));
+    const c = S.sellCoin, v = S.sellAmt, get = v * PRICES[c] * (1 - 0.015), ok = get >= MIN_EUR && v <= S.hold[c];
+    return xc(`<h2>Sell crypto</h2>
+      <div class="swap">
+        <label class="sw1"><span>I sell</span><input id="sellAmt" inputmode="decimal" value="${+v.toFixed(dec(c))}"><button class="cur" data-act="pickCoin" data-k="sell">${cico(c)}${c} ▾</button></label>
+        <div class="sw1"><span>I get</span><output id="sellGet">${eur(+get.toFixed(2))}</output><b class="cur">EUR</b></div>
+      </div>
+      <button class="ghost" style="align-self:flex-start;padding:0" data-act="sellMax">Sell all ${fmtC(S.hold[c], c)}</button>
+      <p class="xerr" id="sellErr" ${ok ? 'hidden' : ''}>Sell at least €${MIN_EUR} worth, and no more than you hold.</p>
+      <div class="iban"><div class="r"><span>Your price (example)</span><span>${eur(PRICES[c])} per ${c}</span></div><div class="r"><span>Euros go to</span><span>Your Xcoins balance</span></div></div>
+      <button class="xbtn" id="sellBtn" data-act="flowSell" ${ok ? '' : 'disabled'}>Sell ${NAMES[c]}</button>
+      ${S.picker === 'sell' ? picker(held()) : ''}`);
+  }
+
+  if (f.k === 'depFico') {
+    if (f.s === 1) return `<span class="tag">This is ${esc(bn)}'s app, not FiCo</span><div class="bankapp">
+      <div class="bar"><i style="background:${bbg};color:${bfg}">${bn.slice(0, 2).toUpperCase()}</i>${esc(bn)}</div>
+      <div class="bd"><h3>Approve this payment</h3>
+        <div class="acc"><span>Amount</span><b>€${S.topup}.00</b></div>
+        <div class="acc"><span>To</span><span style="text-align:right">${full}<br><span class="meta">${IBAN}</span></span></div>
+        <div class="acc"><span>Requested by</span><span>FiCo</span></div></div>
+      <button class="go" style="background:${bfg}" data-act="flowDep">Approve</button>
+      <button class="no" data-act="flowEnd">Cancel</button></div>`;
+    if (f.s === 2) return fico(`<div class="okdot">${tick}</div><h2 class="t" style="text-align:center">${eur(S.topup)} arrived</h2><p class="lead" style="text-align:center">Your euro balance is now ${eur(S.cash)}.</p><button class="cta" data-act="flowEnd">Back to Crypto</button>`);
+    return fico(`<h2 class="t">Add euros to Xcoins</h2>
+      <div class="amts">${[50, 100, 250].map(v => `<button class="amt" data-act="amt" data-v="${v}" aria-pressed="${S.topup === v}">€${v}</button>`).join('')}</div>
+      <div class="from"><span><b>From</b><br><span class="muted">${esc(bn)} · Main account</span></span><span style="text-align:right"><b>€1,912.40</b><br><span class="muted">available</span></span></div>
+      <button class="cta" data-act="flowNext">Continue to ${esc(bn)}</button>`);
+  }
+
+  if (f.k === 'depIban') return fico(`<h2 class="t">Send euros from any bank</h2>
+    <p class="lead">Use these details in your banking app. The account you send from must be in your name.</p>
+    <div class="from" style="display:grid;gap:10px">${[['Name', full], ['IBAN', IBAN], ['Reference', 'XCOINS 7F2K']].map(([k, v]) => `<div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span><span class="muted">${k}</span><br><b>${v}</b></span><button class="pill" style="margin:0" data-act="copy">Copy</button></div>`).join('')}</div>
+    <p class="fine" style="text-align:left">SEPA Instant arrives in seconds. A normal SEPA transfer takes up to one working day. Example IBAN.</p>
+    <button class="cta" data-act="flowEnd">Done</button>`);
+
+  if (f.k === 'depCrypto') {
+    const c = S.depCoin;
+    return xc(`<h2>Deposit crypto</h2><p>Send only ${NAMES[c]} on the ${NETS[c]} network to this address.</p>
+      <button class="cur big" data-act="pickCoin" data-k="dep">${cico(c)}${NAMES[c]} · ${NETS[c]} ▾</button>
+      <div class="addr"><div class="qr" aria-hidden="true"></div><code>${depAddr(c)}</code></div>
+      <button class="xghost" data-act="copy">Copy address</button>
+      <div class="risk">Sending another coin, or using another network, can lose the funds for good. Transfers from another provider carry your details under the Travel Rule.</div>
+      <button class="xbtn" data-act="flowEnd">Done</button>
+      ${S.picker === 'dep' ? picker() : ''}`);
+  }
+
+  if (f.k === 'wdEur') {
+    if (f.s) return xc(done('On its way', `${eur(f.amt)} is going to your ${esc(bn)} account. With SEPA Instant it usually arrives within minutes.`));
+    const ok = S.wdAmt > 0 && S.wdAmt <= S.cash;
+    return xc(`<h2>Withdraw euros</h2>
+      <div class="swap"><label class="sw1"><span>Amount</span><input id="wdAmt" inputmode="decimal" value="${S.wdAmt}"><b class="cur">EUR</b></label></div>
+      <p class="xerr" id="wdErr" ${ok ? 'hidden' : ''}>You have ${eur(S.cash)} available.</p>
+      <div class="iban"><div class="r"><span>To</span><span>${esc(bn)} · DE89 •••• 4127</span></div><div class="r"><span>Account holder</span><span>${full}</span></div></div>
+      <p style="font-size:13px">Filled in from the bank you connected to FiCo. Withdrawals only go to accounts in your name.</p>
+      <label class="xf">Code we sent by SMS<input class="code" inputmode="numeric" maxlength="6" value="590318"></label>
+      <button class="xbtn" id="wdBtn" data-act="flowWdEur" ${ok ? '' : 'disabled'}>Withdraw</button>`);
+  }
+
+  if (f.k === 'wdCrypto') {
+    const c = S.sellCoin;
+    if (f.s) return xc(done('Sent', `${fmtC(f.amt, c)} is on its way. First withdrawals to a new address may be checked by our team first.`));
+    const ok = S.sellAmt > 0 && S.sellAmt <= S.hold[c];
+    return xc(`<h2>Send crypto</h2>
+      <div class="swap"><label class="sw1"><span>Amount</span><input id="wdcAmt" inputmode="decimal" value="${+S.sellAmt.toFixed(dec(c))}"><button class="cur" data-act="pickCoin" data-k="wd">${cico(c)}${c} ▾</button></label></div>
+      <button class="ghost" style="align-self:flex-start;padding:0" data-act="sellMax">Send all ${fmtC(S.hold[c], c)}</button>
+      <label class="xf">To address (${NETS[c]} network)<input value="${depAddr(c).split('').reverse().join('')}" aria-label="Destination address"></label>
+      <div class="xf">Whose wallet is this?
+        <div class="doct"><button data-act="own" data-k="me" aria-pressed="${S.own === 'me'}">My own wallet</button><button data-act="own" data-k="other" aria-pressed="${S.own === 'other'}">Another exchange</button></div></div>
+      ${S.own === 'other' ? '<label class="xf">Exchange name<input value="Kraken"></label>' : ''}
+      <label class="xf">Code we sent by SMS<input class="code" inputmode="numeric" maxlength="6" value="590318"></label>
+      <button class="xbtn" data-act="flowWdCrypto" ${ok ? '' : 'disabled'}>Send ${NAMES[c]}</button>
+      ${S.picker === 'wd' ? picker(held()) : ''}`);
+  }
+  return '';
+}
+
+const FLOWNOTES = {
+  buy: ['Buy', 'Xcoins', 'Opened from the Crypto tab. Same screen as the first buy: I send / I buy, the full coin list, euro balance or card. Minimum €20.', ['No SMS code on buys.', 'Prices differ by customer, so FiCo shows the Xcoins quote, never its own.']],
+  sell: ['Sell', 'Xcoins', 'Pick a coin they hold, type an amount or sell all. The euros land in the Xcoins balance.', ['In this prototype a sale needs no SMS code, because nothing leaves Xcoins. Xcoins decides.', 'From the balance they can buy again or withdraw to their bank.']],
+  depFico: ['Deposit euros through FiCo', 'FiCo', 'Same as the fuel-up: pick an amount, approve in the bank.', ['Payment initiation through the open banking provider: one API call per payment, and the customer approves each one in their bank.', 'The money goes straight to the Xcoins IBAN. FiCo never holds it.']],
+  depIban: ['Deposit euros by bank transfer', 'FiCo', 'The IBAN, name and reference to copy into any banking app.', ['FiCo shows the IBAN Xcoins gives it. (Proposed: part of an account endpoint.)', 'Xcoins may only accept payments from accounts in the customer’s own name.']],
+  depCrypto: ['Deposit crypto', 'Xcoins', 'Pick a coin, copy the address. The network is shown next to it.', ['Deposit addresses come from Fireblocks, through Xcoins.', 'Wrong coin or wrong network can lose the funds, so both are on screen.', 'From another provider, Travel Rule data comes with the transfer. From a self-hosted wallet, Xcoins may ask the customer to confirm it is theirs.']],
+  wdEur: ['Withdraw euros', 'Xcoins', 'Amount, then the SMS code. The destination is the bank account they connected to FiCo.', ['SMS code before every withdrawal, as Xcoins does today.', 'FiCo already knows the customer’s own IBAN from open banking, so there is nothing to type and the name matches.']],
+  wdCrypto: ['Send crypto', 'Xcoins', 'Coin, amount, address, whose wallet it is, then the SMS code.', ['SMS code before every withdrawal.', 'Travel Rule: to another exchange, Xcoins sends the sender’s details with the transfer. To the customer’s own wallet above €1,000, Xcoins has to check the wallet is really theirs.', 'First withdrawals to a new address may go to manual review.']],
+};
 
 function buy() {
   if (S.bought) return;
@@ -734,7 +892,39 @@ const act = {
   amt: el => { S.topup = +el.dataset.v; render(); },
   standing: () => { S.standing = !S.standing; render(); },
   cardBuy: () => { S.cardPath = true; S.pay = 'card'; go(at('buy')); },
-  coin: el => { S.coin = el.dataset.k; render(); },
+  pickCoin: el => { S.picker = S.picker ? false : el.dataset.k; render(); },
+  setCoin: el => {
+    const c = el.dataset.k;
+    if (S.picker === 'sell' || S.picker === 'wd') { S.sellCoin = c; S.sellAmt = S.hold[c]; }
+    else if (S.picker === 'dep') S.depCoin = c; else S.coin = c;
+    S.picker = false; render();
+  },
+  flow: el => {
+    const k = el.dataset.k;
+    if ((k === 'sell' || k === 'wdCrypto') && !held().length) return toast('Nothing to sell or send yet.');
+    if (k === 'sell' || k === 'wdCrypto') { S.sellCoin = S.sellCoin && S.hold[S.sellCoin] > 0 ? S.sellCoin : held()[0]; S.sellAmt = S.hold[S.sellCoin]; }
+    if (k === 'wdEur') S.wdAmt = Math.min(100, S.cash);
+    S.flow = { k, s: 0 }; S.sheet = null; S.picker = false; render();
+  },
+  flowEnd: () => { S.flow = null; S.picker = false; render(); },
+  flowNext: () => { S.flow.s++; render(); },
+  flowBuy: () => {
+    if (S.pay === 'cash' && S.cash < S.buyAmt) S.pay = 'card';
+    const got = S.buyAmt * (1 - fee()) / PRICES[S.coin];
+    S.hold[S.coin] += got; if (S.pay === 'cash') S.cash = +(S.cash - S.buyAmt).toFixed(2);
+    Object.assign(S.flow, { s: 1, got, coin: S.coin }); render();
+  },
+  flowSell: () => {
+    const c = S.sellCoin, got = +(S.sellAmt * PRICES[c] * (1 - 0.015)).toFixed(2);
+    S.hold[c] = Math.max(0, S.hold[c] - S.sellAmt); S.cash = +(S.cash + got).toFixed(2);
+    Object.assign(S.flow, { s: 1, got }); render();
+  },
+  sellMax: () => { S.sellAmt = S.hold[S.sellCoin]; render(); },
+  flowDep: () => { S.cash = +(S.cash + S.topup).toFixed(2); S.flow.s = 2; render(); },
+  flowWdEur: () => { S.cash = +(S.cash - S.wdAmt).toFixed(2); Object.assign(S.flow, { s: 1, amt: S.wdAmt }); render(); },
+  flowWdCrypto: () => { const c = S.sellCoin; S.hold[c] = Math.max(0, S.hold[c] - S.sellAmt); Object.assign(S.flow, { s: 1, amt: S.sellAmt }); render(); },
+  own: el => { S.own = el.dataset.k; render(); },
+  copy: () => toast('Copied'),
   buyAmt: el => { S.buyAmt = +el.dataset.v; render(); },
   payWith: el => { S.pay = el.dataset.k; render(); },
   toWallet: () => go(at('wallet')),
@@ -748,5 +938,30 @@ document.addEventListener('click', e => {
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target.id === 'nm') { e.preventDefault(); act.saveName(); }
 });
+// Live updates while typing amounts or searching coins, without re-rendering the input away.
+document.addEventListener('input', e => {
+  const t = e.target, n = parseFloat(String(t.value).replace(',', '.')) || 0;
+  const set = (id, fn) => { const el = document.getElementById(id); if (el) fn(el); };
+  if (t.id === 'coinSearch') {
+    const q = t.value.trim().toLowerCase();
+    document.querySelectorAll('.pick li').forEach(li => { li.hidden = q && !li.dataset.s.includes(q); });
+  } else if (t.id === 'sendAmt') {
+    S.buyAmt = n; const ok = n >= MIN_EUR;
+    set('getAmt', el => el.textContent = fmtC(ok ? n * (1 - fee()) / PRICES[S.coin] : 0, S.coin));
+    set('feeAmt', el => el.textContent = '€' + (n * fee()).toFixed(2));
+    set('minErr', el => el.hidden = ok); set('buyBtn', el => el.disabled = !ok);
+  } else if (t.id === 'sellAmt') {
+    S.sellAmt = n; const get = n * PRICES[S.sellCoin] * (1 - 0.015), ok = get >= MIN_EUR && n <= S.hold[S.sellCoin];
+    set('sellGet', el => el.textContent = eur(+get.toFixed(2)));
+    set('sellErr', el => el.hidden = ok); set('sellBtn', el => el.disabled = !ok);
+  } else if (t.id === 'wdAmt') {
+    S.wdAmt = n; const ok = n > 0 && n <= S.cash;
+    set('wdErr', el => el.hidden = ok); set('wdBtn', el => el.disabled = !ok);
+  } else if (t.id === 'wdcAmt') {
+    S.sellAmt = n;
+  }
+});
+// Re-render once an amount is settled, so payment options follow the new amount.
+document.addEventListener('change', e => { if (e.target.id === 'sendAmt') render(); });
 render();
 </script>
