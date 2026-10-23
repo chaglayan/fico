@@ -134,6 +134,69 @@ h2.t{margin:0;font-size:27px;line-height:1.12;font-weight:800;letter-spacing:-.0
 .chipline{display:flex;flex-wrap:wrap;gap:6px}
 .chipline span{font-size:12.5px;font-weight:600;border-radius:999px;padding:4px 10px}
 .c-none{background:var(--t1)}.c-call{background:var(--t5)}.c-bill{background:var(--t2)}
+/* First look: expandable tiles */
+.more{justify-self:start;margin-top:6px;background:rgba(255,255,255,.75);border:0;border-radius:999px;padding:5px 11px;font-size:12.5px;font-weight:700}
+.rows{display:grid;gap:7px;margin-top:8px}
+.rows .r{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:13.5px;font-variant-numeric:tabular-nums}
+.rows .r small{grid-column:1/-1;color:#5B6359;font-size:12px}
+.rows .bar{grid-column:1/-1;height:6px;border-radius:3px;background:rgba(255,255,255,.7);overflow:hidden}
+.rows .bar i{display:block;height:100%;border-radius:3px;background:var(--tx);opacity:.75}
+/* Rail groups */
+.railwrap{display:grid;gap:12px}
+.railgrp{display:grid;gap:6px}
+.muted{color:var(--mu)}
+.railgrp b{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+/* Xcoins window: light, its own brand */
+.xc{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;animation:in .28s ease-out;--xa:#E9A21B;--xt:#1F2430;--xm:#6B7180;--xl:#ECEDF1;color:var(--xt)}
+.xcbar{display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--xl);font-size:12.5px;color:var(--xm)}
+.xcbar .lg{font-weight:800;color:var(--xt);font-size:15px;letter-spacing:-.02em}
+.xcbar .lg span{color:var(--xa)}
+.xcbar button{margin-left:auto;background:#F3F4F7;border:0;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700}
+.xcb{flex:1;min-height:0;overflow-y:auto;padding:16px 20px 20px;display:flex;flex-direction:column;gap:13px}
+.xcb h2{margin:0;font-size:23px;line-height:1.15;font-weight:800;letter-spacing:-.02em}
+.xcb p{margin:0;color:var(--xm);font-size:14.5px}
+.xstep{font-size:12px;font-weight:700;color:var(--xm)}
+.xprog{height:4px;border-radius:2px;background:var(--xl);overflow:hidden}
+.xprog i{display:block;height:100%;background:var(--xa)}
+.xf{display:grid;gap:5px;font-size:13px;color:var(--xm);font-weight:600}
+.xf input,.xf select{border:1.5px solid var(--xl);border-radius:12px;padding:12px 13px;font:500 16px var(--f);color:var(--xt);background:#fff;width:100%}
+.xf input:focus,.xf select:focus{border-color:var(--xt);outline:none}
+.xf .pre{font-size:11.5px;font-weight:700;color:#2F6B4F}
+.x2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.code{letter-spacing:.45em;text-align:center;font-weight:700!important}
+.xbtn{margin-top:auto;background:var(--xa);color:#2A1D00;border:0;border-radius:14px;padding:14px;font-weight:800;font-size:15.5px;width:100%}
+.xbtn:disabled{opacity:.35;cursor:not-allowed}
+.xghost{background:#F3F4F7;color:var(--xt);border:0;border-radius:14px;padding:12px;font-weight:700;width:100%}
+.xfoot{padding:8px 16px 12px;font-size:11.5px;color:var(--xm);text-align:center;border-top:1px solid var(--xl)}
+.doct{display:flex;gap:8px}
+.doct button{flex:1;border:1.5px solid var(--xl);background:#fff;border-radius:12px;padding:9px 4px;font-size:12.5px;font-weight:700}
+.doct button[aria-pressed="true"]{border-color:var(--xt);background:#F7F7F9}
+.shot{border:2px dashed #D4D7DF;border-radius:16px;height:96px;display:grid;place-items:center;font-size:13.5px;font-weight:700;color:var(--xm);background:#FAFAFC;width:100%}
+.shot.ok{border-style:solid;border-color:#9BC9AE;background:#EEF7F1;color:#2F6B4F}
+.oval{width:150px;height:190px;border-radius:50%;margin:6px auto 0;position:relative;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 42%,#F2E6DA 0 30%,#E8DCCF 31% 100%)}
+.oval svg{position:absolute;inset:-8px;width:calc(100% + 16px);height:calc(100% + 16px)}
+.oval .face{width:58px;height:70px;border-radius:50%;background:#DCC6B0;margin-top:-10px}
+.spin{width:44px;height:44px;border-radius:50%;border:4px solid var(--xl);border-top-color:var(--xa);animation:spin .9s linear infinite;margin:20px auto 4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.okdot{width:60px;height:60px;border-radius:50%;background:#E3F1E6;display:grid;place-items:center;margin:18px auto 4px}
+.iban{background:#F7F7F9;border-radius:16px;padding:12px 14px;display:grid;gap:8px}
+.iban .r{display:flex;justify-content:space-between;gap:10px;font-size:13.5px}
+.iban .r span:first-child{color:var(--xm)}
+.iban .r span:last-child{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.ways{display:grid;gap:8px}
+.way{display:flex;gap:12px;align-items:center;text-align:left;background:#fff;border:1.5px solid var(--xl);border-radius:14px;padding:12px}
+.way:hover{border-color:var(--xt)}
+.way b{display:block;font-size:14.5px}
+.way span span{font-size:12.5px;color:var(--xm)}
+.way .badge{margin-left:auto;font-size:11px;font-weight:800;background:#E3F1E6;color:#2F6B4F;border-radius:999px;padding:3px 8px;white-space:nowrap}
+.amts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.amt{background:var(--card);border:2px solid transparent;border-radius:16px;padding:14px 4px;font-weight:800;font-size:18px}
+.amt[aria-pressed="true"]{border-color:var(--tx)}
+.from{background:var(--card);border-radius:18px;padding:13px 14px;display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.warnline{background:var(--t2);border-radius:14px;padding:10px 12px;font-size:13px}
+.risk{background:#F7F7F9;border-radius:14px;padding:10px 12px;font-size:12.5px;color:var(--xm)}
+.who{font-weight:700}
+.w-FiCo{background:var(--t1)}.w-Xcoins{background:#FCEBC7}.w-Sumsub{background:var(--t5)}.w-Bank{background:#ECECEC}
 @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -142,7 +205,7 @@ h2.t{margin:0;font-size:27px;line-height:1.12;font-weight:800;letter-spacing:-.0
     <h1>FiCo onboarding</h1>
     <p>Click through it on the phone. The card beside it explains what happens at each step, how long it takes the customer, and which steps cost money. Banks, names and figures are examples.</p>
   </header>
-  <nav class="rail" id="rail" aria-label="Steps"></nav>
+  <nav class="railwrap" id="rail" aria-label="Steps"></nav>
   <div class="stage">
     <div class="phone"><div class="scr" id="scr"></div></div>
     <section class="notes" id="notes" aria-live="polite"></section>
@@ -207,15 +270,90 @@ const STEPS = [
   { id: 'home', label: 'Home', secs: 0, cost: 'none',
     title: 'Home',
     what: 'The tiles follow the goals picked earlier.',
-    behind: ['Nothing exists at Xcoins yet. Tapping the crypto tile starts Xcoins sign-up inside the Xcoins window, which is the next thing to design.'] },
+    behind: ['Nothing exists at Xcoins yet. Tapping the crypto tile starts Xcoins sign-up inside the Xcoins window.'] },
+
+  // ---------- Crypto with Xcoins ----------
+  { id: 'cintro', part: 'crypto', label: 'Intro', secs: 15, cost: 'none', who: 'FiCo',
+    title: 'Crypto with Xcoins',
+    what: 'FiCo explains who Xcoins is and what setting up involves, then opens the Xcoins window.',
+    behind: ["FiCo opens the Xcoins window with a signed handoff that pre-fills what FiCo already knows: email and first name, and the phone number if FiCo has it. (Proposed.)", 'The risk warning shows before anything starts. Exact wording comes from Xcoins compliance.'] },
+  { id: 'email', part: 'crypto', label: 'Email', secs: 20, cost: 'none', who: 'Xcoins', data: 'Email',
+    title: 'Email',
+    what: 'The email is already filled in. The customer types the 6-digit code from their inbox.',
+    behind: ['Xcoins creates the customer record. Using the same email as FiCo keeps the two accounts easy to match.'] },
+  { id: 'phone', part: 'crypto', label: 'Phone', secs: 25, cost: 'none', who: 'Sumsub', data: 'Phone number',
+    title: 'Phone number',
+    what: 'Phone number and an SMS code.',
+    behind: ['Xcoins starts Sumsub here, inside the Xcoins window.', 'If the customer signed up to FiCo with a phone number, it is pre-filled.'] },
+  { id: 'person', part: 'crypto', label: 'Name & birth date', secs: 20, cost: 'none', who: 'Sumsub', data: 'Name, surname, date of birth',
+    title: 'Name and date of birth',
+    what: 'First name is filled in from FiCo. Surname and date of birth are new.',
+    behind: ['These must match the ID document in the next step.'] },
+  { id: 'doc', part: 'crypto', label: 'ID photos', secs: 60, cost: 'none', who: 'Sumsub', data: 'Photos of an ID document',
+    title: 'Photos of an ID document',
+    what: 'Pick the document type, photograph the front and back.',
+    behind: ['Photos go straight to Sumsub. FiCo never sees them.', 'This is where most people drop off: glare, blur, a document out of frame. Sumsub’s camera guide helps.'] },
+  { id: 'live', part: 'crypto', label: 'Selfie', secs: 30, cost: 'none', who: 'Sumsub', data: 'Selfie video',
+    title: 'Liveness check',
+    what: 'Look at the camera and turn their head slowly.',
+    behind: ['Sumsub compares the face with the document photo.', 'Biometric data stays with Sumsub and Xcoins.'] },
+  { id: 'address', part: 'crypto', label: 'Address', secs: 30, cost: 'none', who: 'Xcoins', data: 'Home address',
+    title: 'Home address',
+    what: 'Street, postcode, city. Country is filled in.',
+    behind: ['Collected by Xcoins itself, not Sumsub.', 'Some open banking providers can return the account holder’s address. If yours can, FiCo could pre-fill this too.'] },
+  { id: 'verify', part: 'crypto', label: 'Checking', secs: 20, cost: 'none', who: 'Xcoins',
+    title: 'Checking',
+    what: 'A short wait. Most checks finish within a couple of minutes; some go to manual review.',
+    behind: ['Sumsub sends its result to Xcoins. Xcoins approves the customer and tells FiCo with USER:APPROVED, which exists today.', 'If it takes longer, the customer can close the window. FiCo sends a notification when it’s done.'] },
+  { id: 'eurAccount', part: 'crypto', label: 'EUR account', secs: 10, cost: 'none', who: 'Xcoins',
+    title: 'Your EUR account',
+    what: 'They see their own account details at Xcoins and choose how to add money.',
+    behind: ['For Eurozone customers Xcoins opens a virtual IBAN with OpenPayd. It starts with GB, and EU banks pay into it over SEPA like any other transfer.', 'Three ways in: a transfer started by FiCo (fastest), a transfer the customer makes themselves, or a card.'] },
+  { id: 'amount', part: 'crypto', label: 'Top up', secs: 10, cost: 'call', who: 'FiCo',
+    title: 'Add money through FiCo',
+    what: 'Pick an amount. The bank account is already connected.',
+    behind: ['This is the “write” side of open banking, called payment initiation. FiCo starts the payment through the same provider; it needs its own permission for this, or the provider’s licence.', 'FiCo can see the bank balance, so it can warn if an amount would leave too little for the bills it knows about.'] },
+  { id: 'pay', part: 'crypto', label: 'Bank approves', secs: 30, cost: 'call', who: 'Bank',
+    title: 'Approve the payment in the bank',
+    what: 'The bank app shows the payee, IBAN and amount. The customer approves.',
+    behind: ['In the EU every payment like this is approved by the customer in their bank. There is no standing permission to move money.', 'The money goes straight from the bank to the Xcoins IBAN. FiCo never holds it.', 'With SEPA Instant it arrives in seconds, if the bank supports it.', 'EU banks now check the payee name against the IBAN before sending. Check with OpenPayd what name the virtual IBAN answers with, so customers don’t see a mismatch warning.'] },
+  { id: 'arrived', part: 'crypto', label: 'Money arrived', secs: 10, cost: 'none', who: 'FiCo',
+    title: 'Money arrived',
+    what: 'Confirmation, and an offer to top up every payday.',
+    behind: ['Xcoins tells FiCo the money arrived. (Proposed: DEPOSIT:RECEIVED.)', 'Regular top-ups without approving each one: a standing order the customer sets up in their own bank. FiCo shows the details to copy. No integration, works today.'] },
+  { id: 'buy', part: 'crypto', label: 'First buy', secs: 20, cost: 'none', who: 'Xcoins',
+    title: 'First buy',
+    what: 'FiCo filled in €10 of bitcoin. The customer checks it and confirms with a code.',
+    behind: ['Sent as a signed preset: coin, amount, paid from the EUR balance. Xcoins locks those fields.', 'Paying from the balance means no card fees and no chargebacks.'] },
+  { id: 'bought', part: 'crypto', label: 'Done', secs: 10, cost: 'none', who: 'Xcoins',
+    title: 'Bought',
+    what: 'First buys are checked by the Xcoins team, then go through on their own.',
+    behind: ['Xcoins sends ORDER:IN_REVIEW, then ORDER:COMPLETED, to FiCo. (Proposed.)'] },
+  { id: 'home2', part: 'crypto', label: 'Home', secs: 0, cost: 'none', who: 'FiCo',
+    title: 'Home, with crypto',
+    what: 'Crypto now sits next to everything else, with the EUR balance beside it.',
+    behind: ['Next things to design: autobuys, and round-ups from card spending into bitcoin.'] },
 ];
+STEPS.forEach(s => { s.part = s.part || 'fico'; s.who = s.who || (s.id === 'approve' ? 'Bank' : 'FiCo'); });
+const PARTS = { fico: 'FiCo onboarding', crypto: 'Crypto with Xcoins' };
 const COSTS = { none: ['c-none', 'No cost'], call: ['c-call', 'API call'], bill: ['c-bill', 'Billable: connected user'] };
 
-const S = { i: 0, seen: new Set([0]), name: 'Alex', goals: new Set(['spend', 'subs']), bank: null, skipped: false, checkin: 'weekly', lowbal: true, notif: false };
+const CATS = [['Rent', 650], ['Groceries', 412], ['Eating out', 186], ['Transport', 124], ['Shopping', 98], ['Subscriptions', 61.96], ['Health', 45], ['Other', 13.04]];
+const SUBS = [['FitX gym', 25, '1 Nov'], ['Netflix', 13.99, '4 Nov'], ['Spotify', 10.99, '9 Nov'], ['Disney+', 8.99, '14 Nov'], ['iCloud+', 2.99, '18 Nov']];
+const PAYS = [['25 Aug', 2840], ['25 Sep', 2840], ['25 Oct', 2840, true]];
+const eur = n => '€' + n.toLocaleString('en-IE', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
+const BTC_PRICE = 98500, FEE = 0.015;
+
+const S = { i: 0, seen: new Set([0]), name: 'Alex', goals: new Set(['spend', 'subs', 'crypto']), bank: null, skipped: false, checkin: 'weekly', lowbal: true, notif: false,
+  open: {}, doc: 'id', front: false, back: false, live: 0, verified: false, topup: 100, cash: 0, btc: 0, bought: false, standing: false };
 
 function go(i) {
   S.i = Math.max(0, Math.min(STEPS.length - 1, i));
   S.seen.add(S.i);
+  const id = STEPS[S.i].id;
+  if (['arrived', 'buy', 'bought', 'home2'].includes(id) && !S.bought && !S.cash) S.cash = S.topup;
+  if (id === 'bought' || id === 'home2') buy();
+  if (id === 'home2') S.reviewDone = true;
   render();
 }
 const next = () => go(S.i + 1);
@@ -294,9 +432,15 @@ function screen() {
   if (id === 'look') return `<div class="view">${backBtn()}${dots()}
     <h2 class="t">Here's your first look, ${esc(S.name)}</h2>
     <div class="tiles">
-      <div class="tile" style="background:var(--t1)"><div class="k">Spent in September</div><div class="big">€1,550</div><div class="sm">Groceries was the biggest part: €412.</div></div>
-      <div class="tile" style="background:var(--t4)"><div class="k">Regular payments</div><div class="big">€61.96 a month</div><div class="sm">5 subscriptions, including Disney+ at €8.99. Still using them all?</div></div>
-      <div class="tile" style="background:var(--t2)"><div class="k">Payday</div><div class="big">Around the 25th</div><div class="sm">Usually €2,840 from Brightwell GmbH.</div></div>
+      <div class="tile" style="background:var(--t1)"><div class="k">Spent in September</div><div class="big">€1,590</div><div class="sm">Rent was the biggest part, then groceries at €412.</div>
+        ${S.open.cats ? `<div class="rows">${CATS.map(([n, v]) => `<div class="r"><span>${n}</span><span>${eur(v)}</span><div class="bar"><i style="width:${v / CATS[0][1] * 100}%"></i></div></div>`).join('')}</div>` : ''}
+        <button class="more" data-act="toggle" data-k="cats">${S.open.cats ? 'Show less' : 'All 8 categories'}</button></div>
+      <div class="tile" style="background:var(--t4)"><div class="k">Subscriptions</div><div class="big">€61.96 a month</div><div class="sm">5 regular payments. Still using them all?</div>
+        ${S.open.subs ? `<div class="rows">${SUBS.map(([n, v, d]) => `<div class="r"><span>${n}</span><span>${eur(v)}</span><small>Next charge ${d}</small></div>`).join('')}</div>` : ''}
+        <button class="more" data-act="toggle" data-k="subs">${S.open.subs ? 'Show less' : 'See all 5'}</button></div>
+      <div class="tile" style="background:var(--t2)"><div class="k">Payday</div><div class="big">Around the 25th</div><div class="sm">Usually €2,840 from Brightwell GmbH.</div>
+        ${S.open.pay ? `<div class="rows">${PAYS.map(([d, v, exp]) => `<div class="r"><span>${d}${exp ? ' (expected)' : ''}</span><span>${eur(v)}</span></div>`).join('')}</div>` : ''}
+        <button class="more" data-act="toggle" data-k="pay">${S.open.pay ? 'Show less' : 'Last paydays'}</button></div>
     </div>
     <button class="cta" data-act="next">Looks right</button></div>`;
 
@@ -309,10 +453,129 @@ function screen() {
     <button class="cta" data-act="notif">Turn on notifications</button>
     <button class="ghost alt" data-act="next">Not now</button></div>`;
 
+  // ---------- Crypto with Xcoins ----------
+  const lock = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+  const tick = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2F6B4F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>';
+  const xc = (inner, foot) => `<div class="xc"><div class="xcbar">${lock}<span class="lg">xcoins<span>.</span></span><span>secure window</span><button data-act="closeXc">Close</button></div><div class="xcb">${inner}</div>${foot ? `<div class="xfoot">${foot}</div>` : ''}</div>`;
+  const KYC = ['email', 'phone', 'person', 'doc', 'live', 'address'];
+  const kp = () => { const k = KYC.indexOf(id) + 1; return `<div class="xstep">Verify your identity · step ${k} of ${KYC.length}</div><div class="xprog"><i style="width:${k / KYC.length * 100}%"></i></div>`; };
+  const SUMSUB = 'Identity check by Sumsub, inside the Xcoins window';
+  const full = `${esc(S.name)} Becker`;
+  const IBAN = 'GB29 XCOI 6016 1331 9268 19';
+  const [bn, bbg, bfg] = bankOf();
+
+  if (id === 'cintro') return `<div class="view">
+    <button class="back" data-act="toHome">‹ Home</button>
+    <div class="shapes" style="height:140px" aria-hidden="true"><i class="s3"></i><i class="s2"></i><i class="s4"></i></div>
+    <h2 class="t">Crypto with Xcoins</h2>
+    <p class="lead">FiCo works with Xcoins, a licensed crypto provider in the EU. Xcoins keeps your crypto and your euro balance. FiCo helps you use them.</p>
+    <div class="promise">
+      <div><span class="ic" style="background:var(--t5)"><b>1</b></span><span><b>Verify once.</b> About 4 minutes, with a photo ID.</span></div>
+      <div><span class="ic" style="background:var(--t2)"><b>2</b></span><span><b>Add money</b> straight from your bank.</span></div>
+      <div><span class="ic" style="background:var(--t3)"><b>3</b></span><span><b>Buy from €10</b>, once or every week.</span></div>
+    </div>
+    <p class="fine" style="text-align:left">Crypto prices go up and down. You could lose the money you put in.</p>
+    <button class="cta" data-act="next">Continue with Xcoins</button></div>`;
+
+  if (id === 'email') return xc(`${kp()}<h2>Your email</h2><p>Filled in from FiCo. We sent a code to check it's yours.</p>
+    <label class="xf"><span>Email <span class="pre">· from FiCo</span></span><input value="${esc(S.name.toLowerCase().replace(/[^a-z]/g, '') || 'alex')}@gmail.com" inputmode="email"></label>
+    <label class="xf">6-digit code<input class="code" inputmode="numeric" maxlength="6" value="482913"></label>
+    <button class="xbtn" data-act="next">Continue</button>`);
+
+  if (id === 'phone') return xc(`${kp()}<h2>Your phone number</h2><p>We'll text you a code.</p>
+    <div class="x2" style="grid-template-columns:92px 1fr"><label class="xf">Country<select><option>+49</option><option>+33</option><option>+34</option><option>+39</option><option>+31</option><option>+353</option></select></label><label class="xf">Number<input inputmode="tel" value="151 2345 6789"></label></div>
+    <label class="xf">Code from SMS<input class="code" inputmode="numeric" maxlength="6" value="105377"></label>
+    <button class="xbtn" data-act="next">Continue</button>`, SUMSUB);
+
+  if (id === 'person') return xc(`${kp()}<h2>About you</h2><p>Exactly as it appears on your ID.</p>
+    <label class="xf"><span>First name <span class="pre">· from FiCo</span></span><input value="${esc(S.name)}"></label>
+    <label class="xf">Surname<input value="Becker"></label>
+    <label class="xf">Date of birth<input type="date" value="1994-03-12"></label>
+    <button class="xbtn" data-act="next">Continue</button>`, SUMSUB);
+
+  if (id === 'doc') {
+    const two = S.doc !== 'passport';
+    return xc(`${kp()}<h2>Photo of your ID</h2><p>Good light, no glare, the whole document in the frame.</p>
+      <div class="doct">${[['id', 'ID card'], ['passport', 'Passport'], ['licence', 'Driving licence']].map(([k, t]) => `<button data-act="docType" data-k="${k}" aria-pressed="${S.doc === k}">${t}</button>`).join('')}</div>
+      <button class="shot ${S.front ? 'ok' : ''}" data-act="shot" data-k="front">${S.front ? 'Front added' : two ? 'Take a photo of the front' : 'Take a photo of the photo page'}</button>
+      ${two ? `<button class="shot ${S.back ? 'ok' : ''}" data-act="shot" data-k="back">${S.back ? 'Back added' : 'Take a photo of the back'}</button>` : ''}
+      <button class="xbtn" data-act="next" ${S.front && (S.back || !two) ? '' : 'disabled'}>Continue</button>`, SUMSUB);
+  }
+
+  if (id === 'live') {
+    const p = S.live, C = 2 * Math.PI * 48;
+    return xc(`${kp()}<h2>Quick selfie video</h2><p>${p >= 1 ? 'Done, thanks.' : p > 0 ? 'Now turn your head slowly left, then right.' : 'Hold your phone at eye level and fit your face in the oval.'}</p>
+      <div class="oval"><div class="face"></div><svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><ellipse cx="50" cy="50" rx="48" ry="48" fill="none" stroke="#ECEDF1" stroke-width="4" vector-effect="non-scaling-stroke"/><ellipse id="ring" cx="50" cy="50" rx="48" ry="48" fill="none" stroke="#2F6B4F" stroke-width="4" vector-effect="non-scaling-stroke" stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - p)}" transform="rotate(-90 50 50)"/></svg></div>
+      ${p >= 1 ? '<button class="xbtn" data-act="next">Continue</button>' : `<button class="xbtn" data-act="liveStart" ${p > 0 ? 'disabled' : ''}>${p > 0 ? 'Recording…' : 'Start'}</button>`}`, SUMSUB);
+  }
+
+  if (id === 'address') return xc(`${kp()}<h2>Your home address</h2><p>Where you live now.</p>
+    <div class="x2" style="grid-template-columns:1fr 76px"><label class="xf">Street<input value="Lindenstraße"></label><label class="xf">No.<input value="14"></label></div>
+    <div class="x2" style="grid-template-columns:100px 1fr"><label class="xf">Postcode<input value="10969" inputmode="numeric"></label><label class="xf">City<input value="Berlin"></label></div>
+    <label class="xf">Country<select><option>Germany</option><option>France</option><option>Spain</option><option>Italy</option><option>Netherlands</option><option>Ireland</option></select></label>
+    <button class="xbtn" data-act="next">Send for checking</button>`);
+
+  if (id === 'verify') return xc(S.verified
+    ? `<div class="okdot">${tick}</div><h2 style="text-align:center">You're verified, ${esc(S.name)}</h2><p style="text-align:center">Your Xcoins account is ready, with your own euro account inside it.</p><button class="xbtn" data-act="next">See my euro account</button>`
+    : `<div class="spin" role="status" aria-label="Checking"></div><h2 style="text-align:center">Checking your details</h2><p style="text-align:center">This usually takes a couple of minutes. You can close this window. FiCo will let you know when it's done.</p>`);
+
+  if (id === 'eurAccount') return xc(`<h2>Your euro account</h2><p>Money you send here is ready for buying crypto.</p>
+    <div class="iban"><div class="r"><span>Name</span><span>${full}</span></div><div class="r"><span>IBAN</span><span>${IBAN}</span></div><div class="r"><span>Balance</span><span>€0.00</span></div></div>
+    <p style="font-size:12.5px">Example IBAN. Held with Xcoins' banking partner.</p>
+    <div class="ways">
+      <button class="way" data-act="next"><span><b>From ${esc(bn)}, through FiCo</b><span>Arrives in seconds. You approve it in your bank.</span></span><span class="badge">Fastest</span></button>
+      <button class="way" data-act="soon"><span><b>Transfer it yourself</b><span>Copy the IBAN into your banking app.</span></span></button>
+      <button class="way" data-act="soon"><span><b>Debit or credit card</b><span>Instant. Card fees may apply.</span></span></button>
+    </div>`);
+
+  if (id === 'amount') return `<div class="view"><button class="back" data-act="back">‹ Back</button>
+    <h2 class="t">How much do you want to add?</h2>
+    <div class="amts">${[50, 100, 250].map(v => `<button class="amt" data-act="amt" data-v="${v}" aria-pressed="${S.topup === v}">€${v}</button>`).join('')}</div>
+    <div class="from"><span><b>From</b><br><span class="muted">${esc(bn)} · Main account</span></span><span style="text-align:right"><b>€1,912.40</b><br><span class="muted">available</span></span></div>
+    <div class="from"><span><b>To</b><br><span class="muted">Your Xcoins euro account</span></span><span class="muted" style="text-align:right;font-size:13px">GB29 XCOI<br>…9268 19</span></div>
+    <div class="warnline" style="background:var(--t1)">After this, ${esc(bn)} will have ${eur(1912.40 - S.topup)}. That still covers rent and your subscriptions this month.</div>
+    <button class="cta" data-act="next">Continue to ${esc(bn)}</button></div>`;
+
+  if (id === 'pay') return `<span class="tag">This is ${esc(bn)}'s app, not FiCo</span><div class="bankapp">
+    <div class="bar"><i style="background:${bbg};color:${bfg}">${bn.slice(0, 2).toUpperCase()}</i>${esc(bn)}</div>
+    <div class="bd"><h3>Approve this payment</h3>
+      <div class="acc"><span>Amount</span><b>€${S.topup}.00</b></div>
+      <div class="acc"><span>To</span><span style="text-align:right">${full}<br><span class="meta">${IBAN}</span></span></div>
+      <div class="acc"><span>Reference</span><span>XCOINS 7F2K</span></div>
+      <div class="acc"><span>Requested by</span><span>FiCo</span></div>
+      <p class="meta">Instant transfer. It can't be cancelled once sent.</p></div>
+    <button class="go" style="background:${bfg}" data-act="next">Approve</button>
+    <button class="no" data-act="back">Cancel</button></div>`;
+
+  if (id === 'arrived') return `<div class="view">
+    <div class="okdot">${tick}</div>
+    <h2 class="t" style="text-align:center">${eur(S.topup)} is in your Xcoins account</h2>
+    <p class="lead" style="text-align:center">It arrived in 6 seconds.</p>
+    <div class="tile" style="background:var(--t2)"><div class="k">Top up every payday?</div><div class="sm">Set up a standing order in ${esc(bn)}: ${eur(S.topup)} on the 26th of each month, to your Xcoins IBAN.</div>
+      ${S.standing ? `<div class="rows"><div class="r"><span>Name</span><span>${full}</span></div><div class="r"><span>IBAN</span><span>${IBAN}</span></div><div class="r"><span>Reference</span><span>XCOINS 7F2K</span></div></div>` : ''}
+      <button class="more" data-act="standing">${S.standing ? 'Hide details' : 'Show the details'}</button></div>
+    <button class="cta" data-act="next">Buy my first €10 of bitcoin</button></div>`;
+
+  if (id === 'buy') {
+    const btc = 10 * (1 - FEE) / BTC_PRICE;
+    return xc(`<h2>Buy bitcoin</h2>
+      <div class="iban"><div class="r"><span>You pay</span><span>€10.00</span></div><div class="r"><span>Fee, 1.5% (example)</span><span>€0.15</span></div><div class="r"><span>Price (example)</span><span>€98,500</span></div><div class="r"><span>You get</span><span>≈ ${btc.toFixed(6)} BTC</span></div><div class="r"><span>Pay from</span><span>Euro account, ${eur(S.cash)}</span></div></div>
+      <p style="font-size:13px">FiCo set the coin and amount. To change them, close this and ask FiCo.</p>
+      <label class="xf">Code from SMS<input class="code" inputmode="numeric" maxlength="6" value="771204"></label>
+      <div class="risk">Crypto prices go up and down. You could lose the money you put in.</div>
+      <button class="xbtn" data-act="buyNow">Buy now</button>`);
+  }
+
+  if (id === 'bought') return xc(S.reviewDone
+    ? `<div class="okdot">${tick}</div><h2 style="text-align:center">You own bitcoin</h2><p style="text-align:center">${S.btc.toFixed(6)} BTC is in your Xcoins account, and ${eur(S.cash)} is left in euros.</p><button class="xbtn" data-act="next">Back to FiCo</button>`
+    : `<div class="spin" role="status" aria-label="Checking"></div><h2 style="text-align:center">We're checking your first buy</h2><p style="text-align:center">Our team looks at your first few buys by hand. It usually takes a few minutes, and FiCo will tell you when it's done.</p><button class="xghost" data-act="next">Back to FiCo</button>`);
+
   // home
-  const crypto = S.goals.has('crypto');
+  const crypto = S.goals.has('crypto') || S.bought;
   const tiles = [];
-  const cryptoTile = `<div class="tile w" style="background:var(--t3)"><div class="k">Crypto with Xcoins</div><div class="big">${crypto ? 'Buy your first €10' : 'When you’re ready'}</div><div class="sm">${crypto ? 'Xcoins checks your ID once, about 3 minutes. Then buying takes a tap.' : 'Buy small amounts of bitcoin or ether. Xcoins looks after it for you.'}</div><button class="pill" data-act="soon">${crypto ? 'Get started' : 'Learn more'}</button></div>`;
+  const cryptoTile = S.bought
+    ? `<div class="tile w" style="background:var(--t3)"><div class="k">Crypto with Xcoins</div><div class="big">${eur(+(S.btc * BTC_PRICE).toFixed(2))}</div><div class="sm">${S.btc.toFixed(6)} BTC · plus ${eur(S.cash)} cash in your Xcoins account</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="pill" data-act="soon">Buy more</button><button class="pill" data-act="soon">Make it weekly</button></div></div>`
+    : `<div class="tile w" style="background:var(--t3)"><div class="k">Crypto with Xcoins</div><div class="big">${crypto ? 'Buy your first €10' : 'When you’re ready'}</div><div class="sm">${crypto ? 'Xcoins checks your ID once, about 4 minutes. Then buying takes a tap.' : 'Buy small amounts of bitcoin or ether. Xcoins looks after it for you.'}</div><button class="pill" data-act="toCrypto">${crypto ? 'Get started' : 'Learn more'}</button></div>`;
   if (crypto) tiles.push(cryptoTile);
   if (S.skipped) tiles.push(`<div class="tile w" style="background:var(--t1)"><div class="k">Your spending</div><div class="big">Connect a bank</div><div class="sm">See where your money goes and find subscriptions you forgot about.</div><button class="pill" data-act="toConnect">Connect</button></div>`);
   else tiles.push(
@@ -329,27 +592,39 @@ function screen() {
 
 function notes() {
   const s = STEPS[S.i];
-  const doneSecs = STEPS.slice(0, S.i + 1).reduce((a, x) => a + x.secs, 0);
-  const total = STEPS.reduce((a, x) => a + x.secs, 0);
+  const part = STEPS.filter(x => x.part === s.part);
+  const pi = part.indexOf(s);
+  const doneSecs = part.slice(0, pi + 1).reduce((a, x) => a + x.secs, 0);
+  const total = part.reduce((a, x) => a + x.secs, 0);
   const [cc, cl] = COSTS[s.cost];
-  const fmt = x => x >= 60 ? `${Math.floor(x / 60)} min ${x % 60 ? (x % 60) + ' s' : ''}` : `${x} s`;
-  return `<div class="n">Step ${S.i + 1} of ${STEPS.length}</div>
+  const fmt = x => x >= 60 ? `${Math.floor(x / 60)} min${x % 60 ? ' ' + (x % 60) + ' s' : ''}` : `${x} s`;
+  const slow = s.part === 'fico' ? ['approve'] : ['doc'];
+  return `<div class="n">${PARTS[s.part]} · step ${pi + 1} of ${part.length}</div>
     <h2>${s.title}</h2>
+    <div class="chipline"><span class="who w-${s.who}">On screen: ${s.who}</span>${s.data ? `<span class="c-none">Collects: ${s.data}</span>` : ''}<span class="${cc}">${cl}</span>${s.secs ? `<span class="c-none">About ${fmt(s.secs)}</span>` : ''}</div>
     <div><h3>The customer</h3><p>${s.what}</p></div>
     <div><h3>Behind the scenes</h3><ul>${s.behind.map(b => `<li>${b}</li>`).join('')}</ul></div>
-    <div class="chipline"><span class="${cc}">${cl}</span>${s.secs ? `<span class="c-none">About ${fmt(s.secs)} of the customer's time</span>` : ''}</div>
-    <div class="meter"><h3>Customer time so far</h3>
-      <div class="row"><span>${fmt(doneSecs)}</span><span class="muted">of about ${fmt(total)} in total</span></div>
-      <div class="trk" aria-hidden="true">${STEPS.map((x, k) => `<i style="width:${x.secs / total * 100}%;background:${k <= S.i ? (x.id === 'approve' ? '#E9B949' : 'var(--tx)') : 'transparent'};${k ? 'border-left:2px solid var(--bg)' : ''}"></i>`).join('')}</div>
-      <p style="font-size:13px;color:var(--mu)">The yellow block is the bank approval, the longest part. It's outside FiCo's control.</p>
+    <div class="meter"><h3>Customer time in this part</h3>
+      <div class="row"><span>${fmt(doneSecs)}</span><span class="muted">of about ${fmt(total)}</span></div>
+      <div class="trk" aria-hidden="true">${part.map((x, k) => `<i style="width:${x.secs / total * 100}%;background:${k <= pi ? (slow.includes(x.id) ? '#E9B949' : 'var(--tx)') : 'transparent'};${k ? 'border-left:2px solid var(--bg)' : ''}"></i>`).join('')}</div>
+      <p style="font-size:13px;color:var(--mu)">${s.part === 'fico' ? "The yellow block is the bank approval, the longest part. It's outside FiCo's control." : 'The yellow block is the ID photos, the longest part and where most people drop off.'}</p>
     </div>`;
 }
 
 function render() {
   $('#scr').innerHTML = `<div class="notch"></div>` + screen();
   $('#notes').innerHTML = notes();
-  $('#rail').innerHTML = STEPS.map((s, k) => `<button data-act="jump" data-i="${k}" class="${S.seen.has(k) ? 'seen' : ''}" ${k === S.i ? 'aria-current="step"' : ''}>${k + 1}. ${s.label}</button>`).join('');
-  if (STEPS[S.i].id === 'reading') animateReading();
+  $('#rail').innerHTML = Object.entries(PARTS).map(([p, title]) => `<div class="railgrp"><b>${title}</b><div class="rail">${STEPS.map((s, k) => [s, k]).filter(([s]) => s.part === p).map(([s, k], n) => `<button data-act="jump" data-i="${k}" class="${S.seen.has(k) ? 'seen' : ''}" ${k === S.i ? 'aria-current="step"' : ''}>${n + 1}. ${s.label}</button>`).join('')}</div></div>`).join('');
+  const id = STEPS[S.i].id;
+  if (id === 'reading') animateReading();
+  if (id === 'verify' && !S.verified) later(2600, () => { S.verified = true; });
+  if (id === 'bought' && !S.reviewDone) later(3200, () => { S.reviewDone = true; });
+}
+
+// Runs fn after ms if the customer is still on the same step, then re-renders.
+function later(ms, fn) {
+  const at = S.i;
+  setTimeout(() => { if (S.i === at) { fn(); render(); } }, ms);
 }
 
 let readTimer;
@@ -363,6 +638,11 @@ function animateReading() {
     else { const b = $('#readDone'); if (b) b.disabled = false; }
   };
   readTimer = setTimeout(tick, 300);
+}
+
+function buy() {
+  if (S.bought) return;
+  S.btc += 10 * (1 - FEE) / BTC_PRICE; S.cash = +(S.cash - 10).toFixed(2); S.bought = true;
 }
 
 function toast(msg) {
@@ -381,7 +661,27 @@ const act = {
   checkin: el => { S.checkin = el.dataset.k; render(); },
   lowbal: () => { S.lowbal = !S.lowbal; render(); },
   notif: () => { S.notif = true; next(); },
-  soon: () => toast('Crypto and the other screens come in the next round.'),
+  soon: () => toast('Not in this prototype yet.'),
+  toggle: el => { S.open[el.dataset.k] = !S.open[el.dataset.k]; render(); },
+  toCrypto: () => go(at('cintro')),
+  toHome: () => go(at(S.bought ? 'home2' : 'home')),
+  closeXc: () => go(at(S.bought ? 'home2' : 'home')),
+  docType: el => { S.doc = el.dataset.k; S.front = S.back = false; render(); },
+  shot: el => { S[el.dataset.k] = true; render(); },
+  liveStart: () => {
+    S.live = 0.02; render();
+    const C = 2 * Math.PI * 48, t0 = performance.now(), at0 = S.i;
+    const step = now => {
+      if (S.i !== at0) return;
+      S.live = Math.min(1, (now - t0) / 2600);
+      const r = document.getElementById('ring'); if (r) r.setAttribute('stroke-dashoffset', C * (1 - S.live));
+      if (S.live < 1) requestAnimationFrame(step); else render();
+    };
+    requestAnimationFrame(step);
+  },
+  amt: el => { S.topup = +el.dataset.v; render(); },
+  standing: () => { S.standing = !S.standing; render(); },
+  buyNow: () => next(),
 };
 
 document.addEventListener('click', e => {
