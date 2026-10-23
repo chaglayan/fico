@@ -186,6 +186,18 @@ h2.t{margin:0;font-size:27px;line-height:1.12;font-weight:800;letter-spacing:-.0
 .ways{display:grid;gap:8px}
 .way{display:flex;gap:12px;align-items:center;text-align:left;background:#fff;border:1.5px solid var(--xl);border-radius:14px;padding:12px}
 .way:hover{border-color:var(--xt)}
+.way[aria-pressed="true"]{border-color:var(--xt);background:#FAFAFC}
+.way:disabled{opacity:.45;cursor:not-allowed}
+.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.act{background:var(--card);border:0;border-radius:18px;padding:12px 4px;display:grid;justify-items:center;gap:6px;font-size:12.5px;font-weight:700}
+.act i{width:38px;height:38px;border-radius:50%;background:var(--t3);display:grid;place-items:center}
+.assets{list-style:none;margin:0;padding:0 14px;background:var(--card);border-radius:20px}
+.assets li{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--ln);font-size:14px;font-variant-numeric:tabular-nums}
+.assets li:last-child{border-bottom:0}
+.home{position:relative}
+.fback{position:absolute;inset:0;background:rgba(20,24,20,.35);z-index:4}
+.fsheet{position:absolute;left:0;right:0;bottom:0;z-index:5;background:#fff;border-radius:26px 26px 0 0;padding:18px 16px 20px;display:grid;gap:8px;animation:in .2s ease-out;--xt:#1F2430;--xm:#6B7180;--xl:#ECEDF1}
+.fsheet h3{margin:0 0 4px;font-size:19px;font-weight:800}
 .way b{display:block;font-size:14.5px}
 .way span span{font-size:12.5px;color:var(--xm)}
 .way .badge{margin-left:auto;font-size:11px;font-weight:800;background:#E3F1E6;color:#2F6B4F;border-radius:999px;padding:3px 8px;white-space:nowrap}
@@ -277,14 +289,10 @@ const STEPS = [
     title: 'Crypto with Xcoins',
     what: 'FiCo explains who Xcoins is and what setting up involves, then opens the Xcoins window.',
     behind: ["FiCo opens the Xcoins window with a signed handoff that pre-fills what FiCo already knows: email and first name, and the phone number if FiCo has it. (Proposed.)", 'The risk warning shows before anything starts. Exact wording comes from Xcoins compliance.'] },
-  { id: 'email', part: 'crypto', label: 'Email', secs: 20, cost: 'none', who: 'Xcoins', data: 'Email',
-    title: 'Email',
-    what: 'The email is already filled in. The customer types the 6-digit code from their inbox.',
-    behind: ['Xcoins creates the customer record. Using the same email as FiCo keeps the two accounts easy to match.'] },
-  { id: 'phone', part: 'crypto', label: 'Phone', secs: 25, cost: 'none', who: 'Sumsub', data: 'Phone number',
-    title: 'Phone number',
-    what: 'Phone number and an SMS code.',
-    behind: ['Xcoins starts Sumsub here, inside the Xcoins window.', 'If the customer signed up to FiCo with a phone number, it is pre-filled.'] },
+  { id: 'contact', part: 'crypto', label: 'Email & phone', secs: 25, cost: 'none', who: 'Xcoins', data: 'Phone number',
+    title: 'Email and phone',
+    what: 'The page greets them with the email they signed in to FiCo with. They add a phone number and the SMS code, all on one page. A link lets them use a different email.',
+    behind: ['No email code: FiCo already verified this email at sign-in and passes it in the signed handoff. (Proposed.)', 'The phone check is where Xcoins starts Sumsub.'] },
   { id: 'person', part: 'crypto', label: 'Name & birth date', secs: 20, cost: 'none', who: 'Sumsub', data: 'Name, surname, date of birth',
     title: 'Name and date of birth',
     what: 'First name is filled in from FiCo. Surname and date of birth are new.',
@@ -303,14 +311,14 @@ const STEPS = [
     behind: ['Collected by Xcoins itself, not Sumsub.', 'Some open banking providers can return the account holder’s address. If yours can, FiCo could pre-fill this too.'] },
   { id: 'verify', part: 'crypto', label: 'Checking', secs: 20, cost: 'none', who: 'Xcoins',
     title: 'Checking',
-    what: 'A short wait. Most checks finish within a couple of minutes; some go to manual review.',
+    what: 'A short wait, then two choices: fuel up the account first for the lowest fees, or buy straight away by card.',
     behind: ['Sumsub sends its result to Xcoins. Xcoins approves the customer and tells FiCo with USER:APPROVED, which exists today.', 'If it takes longer, the customer can close the window. FiCo sends a notification when it’s done.'] },
-  { id: 'eurAccount', part: 'crypto', label: 'EUR account', secs: 10, cost: 'none', who: 'Xcoins',
-    title: 'Your EUR account',
-    what: 'They see their own account details at Xcoins and choose how to add money.',
-    behind: ['For Eurozone customers Xcoins opens a virtual IBAN with OpenPayd. It starts with GB, and EU banks pay into it over SEPA like any other transfer.', 'Three ways in: a transfer started by FiCo (fastest), a transfer the customer makes themselves, or a card.'] },
-  { id: 'amount', part: 'crypto', label: 'Top up', secs: 10, cost: 'call', who: 'FiCo',
-    title: 'Add money through FiCo',
+  { id: 'eurAccount', part: 'crypto', label: 'Fuel up', secs: 10, cost: 'none', who: 'Xcoins',
+    title: 'Fuel up your Xcoins account',
+    what: 'Euros in the Xcoins account mean the lowest fees, and every later buy is one tap. They pick how to send them.',
+    behind: ['For Eurozone customers Xcoins opens a virtual IBAN with OpenPayd. It starts with GB, and EU banks pay into it over SEPA like any other transfer.', 'Two ways in: a transfer started by FiCo (fastest), or a transfer the customer makes from any bank. Card stays available as a way to pay for a buy.'] },
+  { id: 'amount', part: 'crypto', label: 'Amount', secs: 10, cost: 'call', who: 'FiCo',
+    title: 'Fuel up through FiCo',
     what: 'Pick an amount. The bank account is already connected.',
     behind: ['This is the “write” side of open banking, called payment initiation. FiCo starts the payment through the same provider; it needs its own permission for this, or the provider’s licence.', 'FiCo can see the bank balance, so it can warn if an amount would leave too little for the bills it knows about.'] },
   { id: 'pay', part: 'crypto', label: 'Bank approves', secs: 30, cost: 'call', who: 'Bank',
@@ -319,20 +327,24 @@ const STEPS = [
     behind: ['In the EU every payment like this is approved by the customer in their bank. There is no standing permission to move money.', 'The money goes straight from the bank to the Xcoins IBAN. FiCo never holds it.', 'With SEPA Instant it arrives in seconds, if the bank supports it.', 'EU banks now check the payee name against the IBAN before sending. Check with OpenPayd what name the virtual IBAN answers with, so customers don’t see a mismatch warning.'] },
   { id: 'arrived', part: 'crypto', label: 'Money arrived', secs: 10, cost: 'none', who: 'FiCo',
     title: 'Money arrived',
-    what: 'Confirmation, and an offer to top up every payday.',
+    what: 'Confirmation, an offer to fuel up every payday, and the main button goes back to buying crypto.',
     behind: ['Xcoins tells FiCo the money arrived. (Proposed: DEPOSIT:RECEIVED.)', 'Regular top-ups without approving each one: a standing order the customer sets up in their own bank. FiCo shows the details to copy. No integration, works today.'] },
-  { id: 'buy', part: 'crypto', label: 'First buy', secs: 20, cost: 'none', who: 'Xcoins',
-    title: 'First buy',
-    what: 'FiCo filled in €10 of bitcoin. The customer checks it and confirms with a code.',
-    behind: ['Sent as a signed preset: coin, amount, paid from the EUR balance. Xcoins locks those fields.', 'Paying from the balance means no card fees and no chargebacks.'] },
+  { id: 'buy', part: 'crypto', label: 'Buy', secs: 15, cost: 'none', who: 'Xcoins',
+    title: 'Buy crypto',
+    what: 'Pick a coin and an amount, choose how to pay, tap Buy. No code needed.',
+    behind: ['Payment methods are Xcoins’: the euro balance (instant, lowest fee) or a card.', 'FiCo can open this with the coin and amount filled in, as a signed preset. (Proposed.)', 'No SMS code on buys. Xcoins asks for one before withdrawals.', 'Amounts and fees here are examples. Minimums and limits come from Xcoins.'] },
   { id: 'bought', part: 'crypto', label: 'Done', secs: 10, cost: 'none', who: 'Xcoins',
     title: 'Bought',
     what: 'First buys are checked by the Xcoins team, then go through on their own.',
     behind: ['Xcoins sends ORDER:IN_REVIEW, then ORDER:COMPLETED, to FiCo. (Proposed.)'] },
   { id: 'home2', part: 'crypto', label: 'Home', secs: 0, cost: 'none', who: 'FiCo',
     title: 'Home, with crypto',
-    what: 'Crypto now sits next to everything else, with the EUR balance beside it.',
-    behind: ['Next things to design: autobuys, and round-ups from card spending into bitcoin.'] },
+    what: 'Crypto now sits next to everything else, with the euro balance beside it. Open goes to the Crypto tab.',
+    behind: ['Balances come from Xcoins. (Proposed: a balances endpoint, or webhooks that keep FiCo up to date.)'] },
+  { id: 'wallet', part: 'crypto', label: 'Crypto tab', secs: 0, cost: 'none', who: 'FiCo',
+    title: 'Crypto tab',
+    what: 'Everything they can do with Xcoins in one place: buy, sell, deposit and withdraw, for euros and for crypto. Tap an action to see the options.',
+    behind: ['Buy, sell and withdraw are confirmed in the Xcoins window. Withdrawals ask for the SMS code, as Xcoins does today.', 'Deposits need no window: FiCo shows the IBAN or a crypto address, or starts a bank top-up like the fuel-up flow.', 'Next to design: autobuys, and round-ups from card spending.'] },
 ];
 STEPS.forEach(s => { s.part = s.part || 'fico'; s.who = s.who || (s.id === 'approve' ? 'Bank' : 'FiCo'); });
 const PARTS = { fico: 'FiCo onboarding', crypto: 'Crypto with Xcoins' };
@@ -342,18 +354,20 @@ const CATS = [['Rent', 650], ['Groceries', 412], ['Eating out', 186], ['Transpor
 const SUBS = [['FitX gym', 25, '1 Nov'], ['Netflix', 13.99, '4 Nov'], ['Spotify', 10.99, '9 Nov'], ['Disney+', 8.99, '14 Nov'], ['iCloud+', 2.99, '18 Nov']];
 const PAYS = [['25 Aug', 2840], ['25 Sep', 2840], ['25 Oct', 2840, true]];
 const eur = n => '€' + n.toLocaleString('en-IE', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
-const BTC_PRICE = 98500, FEE = 0.015;
+const PRICES = { BTC: 98500, ETH: 3420 }, NAMES = { BTC: 'Bitcoin', ETH: 'Ether' };
+const fee = () => S.pay === 'card' ? 0.029 : 0.015;
 
 const S = { i: 0, seen: new Set([0]), name: 'Alex', goals: new Set(['spend', 'subs', 'crypto']), bank: null, skipped: false, checkin: 'weekly', lowbal: true, notif: false,
-  open: {}, doc: 'id', front: false, back: false, live: 0, verified: false, topup: 100, cash: 0, btc: 0, bought: false, standing: false };
+  open: {}, doc: 'id', front: false, back: false, live: 0, verified: false, topup: 250, cash: 0, hold: { BTC: 0, ETH: 0 }, coin: 'BTC', buyAmt: 100, pay: 'cash', fueled: false, cardPath: false, bought: false, standing: false, sheet: null };
 
 function go(i) {
   S.i = Math.max(0, Math.min(STEPS.length - 1, i));
   S.seen.add(S.i);
   const id = STEPS[S.i].id;
-  if (['arrived', 'buy', 'bought', 'home2'].includes(id) && !S.bought && !S.cash) S.cash = S.topup;
-  if (id === 'bought' || id === 'home2') buy();
-  if (id === 'home2') S.reviewDone = true;
+  S.sheet = null;
+  if (['arrived', 'buy', 'bought', 'home2', 'wallet'].includes(id) && !S.fueled && !S.cardPath) { S.cash += S.topup; S.fueled = true; }
+  if (['bought', 'home2', 'wallet'].includes(id)) buy();
+  if (id === 'home2' || id === 'wallet') S.reviewDone = true;
   render();
 }
 const next = () => go(S.i + 1);
@@ -457,7 +471,7 @@ function screen() {
   const lock = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
   const tick = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2F6B4F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>';
   const xc = (inner, foot) => `<div class="xc"><div class="xcbar">${lock}<span class="lg">xcoins<span>.</span></span><span>secure window</span><button data-act="closeXc">Close</button></div><div class="xcb">${inner}</div>${foot ? `<div class="xfoot">${foot}</div>` : ''}</div>`;
-  const KYC = ['email', 'phone', 'person', 'doc', 'live', 'address'];
+  const KYC = ['contact', 'person', 'doc', 'live', 'address'];
   const kp = () => { const k = KYC.indexOf(id) + 1; return `<div class="xstep">Verify your identity · step ${k} of ${KYC.length}</div><div class="xprog"><i style="width:${k / KYC.length * 100}%"></i></div>`; };
   const SUMSUB = 'Identity check by Sumsub, inside the Xcoins window';
   const full = `${esc(S.name)} Becker`;
@@ -470,22 +484,21 @@ function screen() {
     <h2 class="t">Crypto with Xcoins</h2>
     <p class="lead">FiCo works with Xcoins, a licensed crypto provider in the EU. Xcoins keeps your crypto and your euro balance. FiCo helps you use them.</p>
     <div class="promise">
-      <div><span class="ic" style="background:var(--t5)"><b>1</b></span><span><b>Verify once.</b> About 4 minutes, with a photo ID.</span></div>
-      <div><span class="ic" style="background:var(--t2)"><b>2</b></span><span><b>Add money</b> straight from your bank.</span></div>
-      <div><span class="ic" style="background:var(--t3)"><b>3</b></span><span><b>Buy from €10</b>, once or every week.</span></div>
+      <div><span class="ic" style="background:var(--t5)"><b>1</b></span><span><b>Verify once.</b> About 3 minutes, with a photo ID.</span></div>
+      <div><span class="ic" style="background:var(--t2)"><b>2</b></span><span><b>Fuel up from your bank</b> for the lowest fees.</span></div>
+      <div><span class="ic" style="background:var(--t3)"><b>3</b></span><span><b>Buy, sell and send</b> crypto whenever you like.</span></div>
     </div>
     <p class="fine" style="text-align:left">Crypto prices go up and down. You could lose the money you put in.</p>
     <button class="cta" data-act="next">Continue with Xcoins</button></div>`;
 
-  if (id === 'email') return xc(`${kp()}<h2>Your email</h2><p>Filled in from FiCo. We sent a code to check it's yours.</p>
-    <label class="xf"><span>Email <span class="pre">· from FiCo</span></span><input value="${esc(S.name.toLowerCase().replace(/[^a-z]/g, '') || 'alex')}@gmail.com" inputmode="email"></label>
-    <label class="xf">6-digit code<input class="code" inputmode="numeric" maxlength="6" value="482913"></label>
-    <button class="xbtn" data-act="next">Continue</button>`);
-
-  if (id === 'phone') return xc(`${kp()}<h2>Your phone number</h2><p>We'll text you a code.</p>
-    <div class="x2" style="grid-template-columns:92px 1fr"><label class="xf">Country<select><option>+49</option><option>+33</option><option>+34</option><option>+39</option><option>+31</option><option>+353</option></select></label><label class="xf">Number<input inputmode="tel" value="151 2345 6789"></label></div>
-    <label class="xf">Code from SMS<input class="code" inputmode="numeric" maxlength="6" value="105377"></label>
+  if (id === 'contact') {
+    const mail = esc(S.name.toLowerCase().replace(/[^a-z]/g, '') || 'alex') + '@gmail.com';
+    return xc(`${kp()}<h2>Hello ${mail}</h2><p>We'll use the email you signed in to FiCo with.</p>
+    <button class="ghost" style="align-self:flex-start;padding:0" data-act="soon">Use a different email</button>
+    <div class="x2" style="grid-template-columns:92px 1fr"><label class="xf">Country<select><option>+49</option><option>+33</option><option>+34</option><option>+39</option><option>+31</option><option>+353</option></select></label><label class="xf">Your phone number<input inputmode="tel" value="151 2345 6789"></label></div>
+    <label class="xf">Code we sent by SMS<input class="code" inputmode="numeric" maxlength="6" value="105377"></label>
     <button class="xbtn" data-act="next">Continue</button>`, SUMSUB);
+  }
 
   if (id === 'person') return xc(`${kp()}<h2>About you</h2><p>Exactly as it appears on your ID.</p>
     <label class="xf"><span>First name <span class="pre">· from FiCo</span></span><input value="${esc(S.name)}"></label>
@@ -516,20 +529,22 @@ function screen() {
     <button class="xbtn" data-act="next">Send for checking</button>`);
 
   if (id === 'verify') return xc(S.verified
-    ? `<div class="okdot">${tick}</div><h2 style="text-align:center">You're verified, ${esc(S.name)}</h2><p style="text-align:center">Your Xcoins account is ready, with your own euro account inside it.</p><button class="xbtn" data-act="next">See my euro account</button>`
+    ? `<div class="okdot">${tick}</div><h2 style="text-align:center">You're verified, ${esc(S.name)}</h2><p style="text-align:center">Your Xcoins account is ready. How do you want to start?</p>
+      <div class="ways">
+        <button class="way" data-act="next"><span><b>Fuel up your account</b><span>Send euros from ${esc(bn)} first. Lowest fees, and buying is instant from then on.</span></span><span class="badge">Best value</span></button>
+        <button class="way" data-act="cardBuy"><span><b>Buy crypto now</b><span>Pay by card. Higher fee.</span></span></button>
+      </div>`
     : `<div class="spin" role="status" aria-label="Checking"></div><h2 style="text-align:center">Checking your details</h2><p style="text-align:center">This usually takes a couple of minutes. You can close this window. FiCo will let you know when it's done.</p>`);
 
-  if (id === 'eurAccount') return xc(`<h2>Your euro account</h2><p>Money you send here is ready for buying crypto.</p>
-    <div class="iban"><div class="r"><span>Name</span><span>${full}</span></div><div class="r"><span>IBAN</span><span>${IBAN}</span></div><div class="r"><span>Balance</span><span>€0.00</span></div></div>
-    <p style="font-size:12.5px">Example IBAN. Held with Xcoins' banking partner.</p>
+  if (id === 'eurAccount') return xc(`<h2>Fuel up your Xcoins account</h2><p>Euros in your Xcoins account mean the lowest fees, and buying takes one tap.</p>
     <div class="ways">
       <button class="way" data-act="next"><span><b>From ${esc(bn)}, through FiCo</b><span>Arrives in seconds. You approve it in your bank.</span></span><span class="badge">Fastest</span></button>
-      <button class="way" data-act="soon"><span><b>Transfer it yourself</b><span>Copy the IBAN into your banking app.</span></span></button>
-      <button class="way" data-act="soon"><span><b>Debit or credit card</b><span>Instant. Card fees may apply.</span></span></button>
-    </div>`);
+      <button class="way" data-act="toggle" data-k="iban"><span><b>Transfer it yourself</b><span>From any bank, to your own Xcoins IBAN.</span></span></button>
+    </div>
+    ${S.open.iban ? `<div class="iban"><div class="r"><span>Name</span><span>${full}</span></div><div class="r"><span>IBAN</span><span>${IBAN}</span></div><div class="r"><span>Reference</span><span>XCOINS 7F2K</span></div></div><p style="font-size:12.5px">Example IBAN. Held with Xcoins' banking partner.</p>` : ''}`);
 
   if (id === 'amount') return `<div class="view"><button class="back" data-act="back">‹ Back</button>
-    <h2 class="t">How much do you want to add?</h2>
+    <h2 class="t">How much do you want to send to Xcoins?</h2>
     <div class="amts">${[50, 100, 250].map(v => `<button class="amt" data-act="amt" data-v="${v}" aria-pressed="${S.topup === v}">€${v}</button>`).join('')}</div>
     <div class="from"><span><b>From</b><br><span class="muted">${esc(bn)} · Main account</span></span><span style="text-align:right"><b>€1,912.40</b><br><span class="muted">available</span></span></div>
     <div class="from"><span><b>To</b><br><span class="muted">Your Xcoins euro account</span></span><span class="muted" style="text-align:right;font-size:13px">GB29 XCOI<br>…9268 19</span></div>
@@ -551,31 +566,60 @@ function screen() {
     <div class="okdot">${tick}</div>
     <h2 class="t" style="text-align:center">${eur(S.topup)} is in your Xcoins account</h2>
     <p class="lead" style="text-align:center">It arrived in 6 seconds.</p>
-    <div class="tile" style="background:var(--t2)"><div class="k">Top up every payday?</div><div class="sm">Set up a standing order in ${esc(bn)}: ${eur(S.topup)} on the 26th of each month, to your Xcoins IBAN.</div>
+    <div class="tile" style="background:var(--t2)"><div class="k">Fuel up every payday?</div><div class="sm">Set up a standing order in ${esc(bn)}: ${eur(S.topup)} on the 26th of each month, to your Xcoins IBAN.</div>
       ${S.standing ? `<div class="rows"><div class="r"><span>Name</span><span>${full}</span></div><div class="r"><span>IBAN</span><span>${IBAN}</span></div><div class="r"><span>Reference</span><span>XCOINS 7F2K</span></div></div>` : ''}
       <button class="more" data-act="standing">${S.standing ? 'Hide details' : 'Show the details'}</button></div>
-    <button class="cta" data-act="next">Buy my first €10 of bitcoin</button></div>`;
+    <button class="cta" data-act="next">Buy crypto</button></div>`;
 
   if (id === 'buy') {
-    const btc = 10 * (1 - FEE) / BTC_PRICE;
-    return xc(`<h2>Buy bitcoin</h2>
-      <div class="iban"><div class="r"><span>You pay</span><span>€10.00</span></div><div class="r"><span>Fee, 1.5% (example)</span><span>€0.15</span></div><div class="r"><span>Price (example)</span><span>€98,500</span></div><div class="r"><span>You get</span><span>≈ ${btc.toFixed(6)} BTC</span></div><div class="r"><span>Pay from</span><span>Euro account, ${eur(S.cash)}</span></div></div>
-      <p style="font-size:13px">FiCo set the coin and amount. To change them, close this and ask FiCo.</p>
-      <label class="xf">Code from SMS<input class="code" inputmode="numeric" maxlength="6" value="771204"></label>
+    if (S.pay === 'cash' && S.cash < S.buyAmt) S.pay = 'card';
+    const got = S.buyAmt * (1 - fee()) / PRICES[S.coin];
+    return xc(`<h2>Buy crypto</h2>
+      <div class="doct">${['BTC', 'ETH'].map(c => `<button data-act="coin" data-k="${c}" aria-pressed="${S.coin === c}">${NAMES[c]}</button>`).join('')}</div>
+      <div class="doct">${[50, 100, 250].map(v => `<button data-act="buyAmt" data-v="${v}" aria-pressed="${S.buyAmt === v}">€${v}</button>`).join('')}<button data-act="soon">Other</button></div>
+      <div class="ways">
+        <button class="way" data-act="payWith" data-k="cash" aria-pressed="${S.pay === 'cash'}" ${S.cash < S.buyAmt ? 'disabled' : ''}><span><b>Euro balance</b><span>${eur(S.cash)} available · instant, lowest fee</span></span></button>
+        <button class="way" data-act="payWith" data-k="card" aria-pressed="${S.pay === 'card'}"><span><b>Debit or credit card</b><span>Higher fee</span></span></button>
+      </div>
+      <div class="iban"><div class="r"><span>You pay</span><span>€${S.buyAmt}.00</span></div><div class="r"><span>Fee, ${(fee() * 100).toFixed(1)}% (example)</span><span>€${(S.buyAmt * fee()).toFixed(2)}</span></div><div class="r"><span>Price (example)</span><span>${eur(PRICES[S.coin])}</span></div><div class="r"><span>You get</span><span>≈ ${got.toFixed(S.coin === 'BTC' ? 6 : 5)} ${S.coin}</span></div></div>
       <div class="risk">Crypto prices go up and down. You could lose the money you put in.</div>
-      <button class="xbtn" data-act="buyNow">Buy now</button>`);
+      <button class="xbtn" data-act="next">Buy ${NAMES[S.coin].toLowerCase()}</button>`);
   }
 
   if (id === 'bought') return xc(S.reviewDone
-    ? `<div class="okdot">${tick}</div><h2 style="text-align:center">You own bitcoin</h2><p style="text-align:center">${S.btc.toFixed(6)} BTC is in your Xcoins account, and ${eur(S.cash)} is left in euros.</p><button class="xbtn" data-act="next">Back to FiCo</button>`
+    ? `<div class="okdot">${tick}</div><h2 style="text-align:center">Done</h2><p style="text-align:center">${holdText()} is in your Xcoins account, and ${eur(S.cash)} is left in euros.</p><button class="xbtn" data-act="next">Back to FiCo</button>`
     : `<div class="spin" role="status" aria-label="Checking"></div><h2 style="text-align:center">We're checking your first buy</h2><p style="text-align:center">Our team looks at your first few buys by hand. It usually takes a few minutes, and FiCo will tell you when it's done.</p><button class="xghost" data-act="next">Back to FiCo</button>`);
+
+  if (id === 'wallet') {
+    const val = Object.entries(S.hold).reduce((a, [c, v]) => a + v * PRICES[c], 0);
+    const IC = { buy: '<path d="M12 5v14M5 12h14"/>', sell: '<path d="M5 12h14"/>', deposit: '<path d="M12 4v13M6 11l6 6 6-6M5 20h14"/>', withdraw: '<path d="M12 20V7M6 13l6-6 6 6M5 4h14"/>' };
+    const SH = {
+      buy: ['Buy', [['With your euro balance', `${eur(S.cash)} available. Instant, lowest fee.`], ['With a card', 'Higher fee.']]],
+      sell: ['Sell', [['Crypto for euros', 'The euros land in your Xcoins balance.'], ['Then send them to ' + bn, 'Optional, in the same flow.']]],
+      deposit: ['Deposit', [['Euros from ' + bn + ', through FiCo', 'Arrives in seconds.'], ['Euros by bank transfer', 'To your Xcoins IBAN, from any bank.'], ['Crypto from another wallet', 'Show my bitcoin or ether address.']]],
+      withdraw: ['Withdraw', [['Euros to ' + bn, 'To your own account. SMS code needed.'], ['Crypto to a wallet', 'To an address you choose. SMS code needed.']]],
+    };
+    const sh = S.sheet && SH[S.sheet];
+    return `<div class="home"><div class="top"><div class="hi">Crypto</div><div class="date">With Xcoins</div></div>
+      <div class="grid" style="grid-template-columns:1fr">
+        <div class="tile" style="background:var(--t3)"><div class="k">Total at Xcoins</div><div class="big">${eur(+(S.cash + val).toFixed(2))}</div><div class="sm">Crypto ${eur(+val.toFixed(2))} · euros ${eur(S.cash)}</div></div>
+        <div class="acts">${Object.keys(IC).map(k => `<button class="act" data-act="sheet" data-k="${k}"><i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${IC[k]}</svg></i>${SH[k][0]}</button>`).join('')}</div>
+        <ul class="assets">
+          <li><span><b>Euro</b><br><span class="muted">Xcoins balance</span></span><span>${eur(S.cash)}</span></li>
+          ${Object.entries(S.hold).filter(([, v]) => v > 0).map(([c, v]) => `<li><span><b>${NAMES[c]}</b><br><span class="muted">${v.toFixed(c === 'BTC' ? 6 : 5)} ${c}</span></span><span>${eur(+(v * PRICES[c]).toFixed(2))}</span></li>`).join('')}
+        </ul>
+      </div>
+      <div class="tabs"><span>Home</span><span>Money</span><span class="on">Crypto</span><span>Ask</span></div>
+      ${sh ? `<div class="fback" data-act="sheet" data-k=""></div><div class="fsheet" role="dialog" aria-label="${sh[0]}"><h3>${sh[0]}</h3>${sh[1].map(([t, d]) => `<button class="way" data-act="soon"><span><b>${esc(t)}</b><span>${d}</span></span></button>`).join('')}<button class="xghost" data-act="sheet" data-k="">Close</button></div>` : ''}
+    </div>`;
+  }
 
   // home
   const crypto = S.goals.has('crypto') || S.bought;
   const tiles = [];
   const cryptoTile = S.bought
-    ? `<div class="tile w" style="background:var(--t3)"><div class="k">Crypto with Xcoins</div><div class="big">${eur(+(S.btc * BTC_PRICE).toFixed(2))}</div><div class="sm">${S.btc.toFixed(6)} BTC · plus ${eur(S.cash)} cash in your Xcoins account</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="pill" data-act="soon">Buy more</button><button class="pill" data-act="soon">Make it weekly</button></div></div>`
-    : `<div class="tile w" style="background:var(--t3)"><div class="k">Crypto with Xcoins</div><div class="big">${crypto ? 'Buy your first €10' : 'When you’re ready'}</div><div class="sm">${crypto ? 'Xcoins checks your ID once, about 4 minutes. Then buying takes a tap.' : 'Buy small amounts of bitcoin or ether. Xcoins looks after it for you.'}</div><button class="pill" data-act="toCrypto">${crypto ? 'Get started' : 'Learn more'}</button></div>`;
+    ? `<div class="tile w" style="background:var(--t3)"><div class="k">Crypto with Xcoins</div><div class="big">${eur(+Object.entries(S.hold).reduce((a, [c, v]) => a + v * PRICES[c], 0).toFixed(2))}</div><div class="sm">${holdText()} · plus ${eur(S.cash)} in euros</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="pill" data-act="toWallet">Open</button><button class="pill" data-act="soon">Make it weekly</button></div></div>`
+    : `<div class="tile w" style="background:var(--t3)"><div class="k">Crypto with Xcoins</div><div class="big">${crypto ? 'Start with crypto' : 'When you’re ready'}</div><div class="sm">${crypto ? 'Xcoins checks your ID once, about 3 minutes. Then buying takes a tap.' : 'Buy small amounts of bitcoin or ether. Xcoins looks after it for you.'}</div><button class="pill" data-act="toCrypto">${crypto ? 'Get started' : 'Learn more'}</button></div>`;
   if (crypto) tiles.push(cryptoTile);
   if (S.skipped) tiles.push(`<div class="tile w" style="background:var(--t1)"><div class="k">Your spending</div><div class="big">Connect a bank</div><div class="sm">See where your money goes and find subscriptions you forgot about.</div><button class="pill" data-act="toConnect">Connect</button></div>`);
   else tiles.push(
@@ -640,9 +684,17 @@ function animateReading() {
   readTimer = setTimeout(tick, 300);
 }
 
+function holdText() {
+  const h = Object.entries(S.hold).filter(([, v]) => v > 0).map(([c, v]) => `${v.toFixed(c === 'BTC' ? 6 : 5)} ${c}`);
+  return h.length ? h.join(' and ') : 'No crypto yet';
+}
+
 function buy() {
   if (S.bought) return;
-  S.btc += 10 * (1 - FEE) / BTC_PRICE; S.cash = +(S.cash - 10).toFixed(2); S.bought = true;
+  if (S.pay === 'cash' && S.cash < S.buyAmt) S.pay = 'card';
+  S.hold[S.coin] += S.buyAmt * (1 - fee()) / PRICES[S.coin];
+  if (S.pay === 'cash') S.cash = +(S.cash - S.buyAmt).toFixed(2);
+  S.bought = true;
 }
 
 function toast(msg) {
@@ -681,7 +733,12 @@ const act = {
   },
   amt: el => { S.topup = +el.dataset.v; render(); },
   standing: () => { S.standing = !S.standing; render(); },
-  buyNow: () => next(),
+  cardBuy: () => { S.cardPath = true; S.pay = 'card'; go(at('buy')); },
+  coin: el => { S.coin = el.dataset.k; render(); },
+  buyAmt: el => { S.buyAmt = +el.dataset.v; render(); },
+  payWith: el => { S.pay = el.dataset.k; render(); },
+  toWallet: () => go(at('wallet')),
+  sheet: el => { S.sheet = el.dataset.k || null; $('#scr').innerHTML = `<div class="notch"></div>` + screen(); },
 };
 
 document.addEventListener('click', e => {
