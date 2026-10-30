@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fico",
+  "main": "./src/worker/index.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    // The React app is a single-page app; unknown paths serve index.html.
+    "not_found_handling": "single-page-application",
+    // Requests under /api go to the worker before static assets.
+    "run_worker_first": ["/api/*"]
+  },
+  "vars": {
+    "APP_ENV": "development"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

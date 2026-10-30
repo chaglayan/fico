@@ -3,6 +3,17 @@
 The running record of what we decided and why. Newest first. Every build
 session reads this before starting.
 
+## 2026-10-31 (later)
+
+**Hosting: Cloudflare, not Vercel.** The founder already hosts on Cloudflare.
+The app is a React single-page app built with Vite; the API is Hono on
+Cloudflare Workers, deployed together. Supabase (Frankfurt) stays for the
+database and sign-in.
+
+**Solo founder for now.** No co-founder is assumed. The UK company stays an
+option if someone joins; until then: sandbox without a company, pilot under
+Xcoins.
+
 ## 2026-10-31
 
 **Home: option A, "Today first".** One action at the top, tiles below. The

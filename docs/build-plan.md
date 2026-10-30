@@ -1,17 +1,18 @@
-# FiCo build plan (proposed)
+# FiCo build plan
 
 ## Stack
 
 | Part | Choice | Why | Pilot cost |
 |---|---|---|---|
-| Web app | Next.js (React, TypeScript), mobile-first, installable | Mainstream, easy to hire for; the logic carries over to a mobile app later | |
-| Hosting | Vercel, EU region | Simple deploys and previews for every pull request | about $20 a month |
+| Web app | React (TypeScript) built with Vite, mobile-first, installable | Plain and well known; the logic carries over to a mobile app later | |
+| API and jobs | Hono on Cloudflare Workers, Cron Triggers for daily refresh and nudges | Runs natively on Cloudflare, where the founder already hosts | free plan, or $5 a month |
+| Hosting | Cloudflare Workers with static assets | One deploy for the app and the API | included above |
 | Database and sign-in | Supabase, Frankfurt | Postgres plus email, Google and Apple sign-in in one service | free tier, then $25 a month |
 | Bank data | Yapily Connect (EU) | Decided | quote pending |
 | Email | Resend or Postmark | Transactional email with templates | free tier for the pilot |
 | Analytics, flags | PostHog EU | Decided | free tier |
 | Bitcoin price history | CoinGecko until Xcoins has a feed | Free plan with rate limits | free |
-| Languages | next-intl, German and English | | |
+| Languages | A small typed dictionary, German and English | No library needed at this size; missing translations fail the tests | |
 | Tests | Vitest for logic, Playwright for flows | | |
 
 Everything that talks to Yapily or Xcoins sits behind an interface with a
@@ -40,4 +41,4 @@ Each slice is one or more pull requests, reviewable and testable on its own.
 
 - Yapily sandbox application ID and secret, as environment secrets.
 - A PostHog EU project key (free sign-up).
-- Later: a domain name, and Supabase and Vercel accounts (free to start).
+- Later: a domain name on Cloudflare, and a Supabase account (free to start).
