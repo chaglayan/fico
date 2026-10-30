@@ -1,0 +1,59 @@
+# FiCo decisions
+
+The running record of what we decided and why. Newest first. Every build
+session reads this before starting.
+
+## 2026-10-30
+
+**Data: keep it, minimal.** FiCo stores the bank data its features need
+(accounts, balances, about 12 months of transactions, detected subscriptions)
+so we can learn from it and send timely nudges. Everything else is not stored.
+Deleted when the customer disconnects or closes their account.
+
+**Licence: none of our own.** Bank data through Yapily Connect's EU entity
+(Lithuania), which lets an unlicensed company show account data to EEA users
+without becoming an agent. Crypto through Xcoins' MiCA licence.
+
+**Entity path.**
+1. Sandbox build: no company. Uses the founder's Yapily sandbox account.
+2. Pilot: Xcoins signs the Yapily contract.
+3. If the co-founder joins: a UK limited company, with the UK-resident
+   co-founder as a director. Costs below.
+The founder's Turkish sole proprietorship is not used (personal liability,
+EU data outside the EU, tax status of salary income).
+
+**Analytics: PostHog, EU cloud.** Product analytics, session replay (masked),
+feature flags and experiments in one tool. Tracking plan in `analytics.md`.
+Spotify Confidence reconsidered once we run experiments at a scale PostHog
+handles badly.
+
+## UK limited company: cost estimate
+
+Official fees confirmed from secondary sources (Companies House from
+1 February 2026, ICO from February 2025); service prices are typical ranges,
+not quotes.
+
+| Item | When | Cost |
+|---|---|---|
+| Incorporation at Companies House (online) | Once | £100 |
+| Confirmation statement | Yearly | £50 |
+| ICO data protection fee (tier 1) | Yearly | £52 |
+| Registered office address service (keeps a home address off the register) | Yearly | £30–£150 |
+| Director identity verification (GOV.UK) | Once per director | Free |
+| Business bank account (Tide, Starling and similar) | Monthly | £0–£10 |
+| Accountant: annual accounts, corporation tax return | Yearly | £1,000–£1,800 |
+| Shareholder agreement, IP assignment, vesting | Once | £500–£2,000 (or a template service) |
+| **First year** | | **about £1,800–£4,200** |
+| **Each year after** | | **about £1,200–£2,100** |
+
+Notes:
+- The UK has an EU adequacy decision, so EU customers' data can flow to a UK
+  company without extra contracts, unlike Turkey.
+- Confirm with Yapily that a UK company can use Yapily Connect UAB for EEA
+  customers.
+- The founder, as a Turkish-resident shareholder, should ask a mali müşavir
+  about Turkish tax on any future dividends.
+
+Sources: [ICAEW on 2026 Companies House fees](https://www.icaew.com/insights/viewpoints-on-the-news/2025/nov-2025/significant-hikes-to-companies-house-fees-in-2026),
+[Rapid Formations](https://www.rapidformations.co.uk/blog/companies-house-fees-increase/),
+[Lewis Silkin on ICO fees](https://www.lewissilkin.com/insights/2025/02/06/fee-payable-to-the-ico-to-increase-in-february-102jzb9).
