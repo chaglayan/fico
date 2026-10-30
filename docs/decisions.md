@@ -5,6 +5,22 @@ session reads this before starting.
 
 ## 2026-10-30
 
+**Platform: web app first.** Built so it can become a mobile app later. No
+app stores for the pilot.
+
+**Pilot country: Germany.** German banks first; the app needs German.
+
+**Pilot scope (v1).**
+- Bank connection and spending by category
+- Subscriptions list
+- The nudge ("Disney+ or bitcoin?") with real bitcoin price history
+- Xcoins handoff and the crypto tile, **simulated until Xcoins is ready**,
+  behind the same interface the real Xcoins integration will use
+
+**Not final yet: nudges and other actions, and the home screen.** One more
+design round before building those. Onboarding, the look, and the crypto flows
+are accepted as prototyped.
+
 **Data: keep it, minimal.** FiCo stores the bank data its features need
 (accounts, balances, about 12 months of transactions, detected subscriptions)
 so we can learn from it and send timely nudges. Everything else is not stored.

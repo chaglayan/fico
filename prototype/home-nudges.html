@@ -1,0 +1,210 @@
+<title>FiCo Home and Nudges</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: three home screen options as phones, then the nudge catalogue as cards grouped by funnel stage. Soft tiles direction, one light look on purpose. */
+:root{
+  --page:#EFEEE9; --bg:#F7F6F2; --card:#FFFFFF; --tx:#232A24; --mu:#5F675E; --ln:#E2E0D8;
+  --ok:#2F6B4F; --xa:#E9A21B;
+  --t1:#E3F1E6; --t2:#FFF1C9; --t3:#ECE6FA; --t4:#FFE3DC; --t5:#DDEEF8;
+  --f:"Figtree", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--page);color:var(--tx);font:15px/1.5 var(--f);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:36px 72px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:48px}
+.intro{display:grid;gap:8px;max-width:68ch}
+.intro h1{margin:0;font-size:clamp(28px,4vw,38px);font-weight:800;letter-spacing:-.025em;text-wrap:balance}
+.intro p{margin:0;color:var(--mu)}
+h2{margin:0;font-size:24px;font-weight:800;letter-spacing:-.02em}
+.sec{display:grid;gap:18px}
+.sec>p{margin:0;color:var(--mu);max-width:70ch}
+.homes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+@media (max-width:1000px){.homes{grid-template-columns:minmax(0,1fr)}}
+.opt{display:grid;gap:12px;justify-items:center;align-content:start}
+.opt header{justify-self:stretch;display:grid;gap:2px}
+.opt header b{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)}
+.opt header h3{margin:0;font-size:19px;font-weight:800}
+.opt header p{margin:0;font-size:14px;color:var(--mu)}
+.phone{width:100%;max-width:300px;height:620px;border-radius:40px;background:#fff;padding:8px;box-shadow:0 24px 48px -30px rgba(40,45,30,.5)}
+.scr{height:100%;border-radius:33px;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+.notch{width:84px;height:22px;border-radius:12px;background:#151815;margin:8px auto 0;flex-shrink:0}
+.top{padding:12px 16px 4px}
+.hi{font-size:20px;font-weight:800;letter-spacing:-.02em}
+.date{font-size:12px;color:var(--mu)}
+.body{flex:1;min-height:0;padding:8px 12px;display:grid;gap:8px;align-content:start;overflow:hidden}
+.tile{border-radius:18px;padding:11px 12px;display:grid;gap:2px}
+.k{font-size:11px;font-weight:700;opacity:.7}
+.big{font-size:19px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.sm{font-size:12px;line-height:1.35}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btns{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+.b1{background:var(--tx);color:#fff;border-radius:999px;padding:5px 10px;font-size:11.5px;font-weight:700}
+.b2{background:rgba(255,255,255,.8);border-radius:999px;padding:5px 10px;font-size:11.5px;font-weight:700}
+.today{background:var(--card);border-radius:18px;padding:12px;display:grid;gap:4px;box-shadow:0 6px 18px -12px rgba(30,40,30,.35)}
+.eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ok)}
+.feeditem{background:var(--card);border-radius:16px;padding:10px 12px;display:grid;gap:3px}
+.feeditem time{font-size:10.5px;color:var(--mu)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;padding:7px 0;border-bottom:1px solid var(--ln)}
+.row:last-child{border-bottom:0}
+.list{background:var(--card);border-radius:16px;padding:4px 12px}
+.tabs{display:flex;justify-content:space-around;padding:8px 6px 12px;font-size:10.5px;color:var(--mu);border-top:1px solid var(--ln)}
+.tabs .on{color:var(--tx);font-weight:800}
+.stage{display:grid;gap:12px}
+.stage h3{margin:0;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)}
+.nudges{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:16px}
+.n{background:var(--card);border-radius:22px;padding:18px;display:grid;gap:10px;align-content:start;border:1px solid var(--ln)}
+.nh{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.nh b{font-size:16px}
+.pill{font-size:11.5px;font-weight:800;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.yes{background:var(--t1);color:var(--ok)}.maybe{background:var(--t2);color:#7A5C00}.later{background:#ECECEC;color:#555}
+.msg{background:var(--bg);border-radius:16px;padding:12px;display:grid;gap:6px}
+.msg p{margin:0;font-size:14px}
+.msg .from{font-size:11px;font-weight:700;color:var(--mu)}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:13px;margin:0}
+.meta dt{color:var(--mu)}
+.meta dd{margin:0}
+.ask{background:var(--card);border-radius:22px;padding:22px;display:grid;gap:10px;border:1px solid var(--ln)}
+.ask ol{margin:0;padding-left:20px;display:grid;gap:8px;max-width:72ch}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="intro">
+    <h1>Home and nudges, round 2</h1>
+    <p>Three ways to lay out the home screen, and a catalogue of nudges built from bank data. Pick a home, tick the nudges for the pilot, and say what to change. Figures are examples.</p>
+  </header>
+
+  <section class="sec" aria-labelledby="homes-h">
+    <h2 id="homes-h">Home screen options</h2>
+    <p>All three show the same things: one action for today, spending, subscriptions, payday and crypto. They differ in what comes first.</p>
+    <div class="homes">
+      <div class="opt">
+        <header><b>A</b><h3>Today first</h3><p>One action at the top, the familiar tiles below. Calm; one nudge at a time.</p></header>
+        <div class="phone"><div class="scr">
+          <div class="notch"></div>
+          <div class="top"><div class="hi">Hey Alex</div><div class="date">Thursday 30 October</div></div>
+          <div class="body">
+            <div class="today"><span class="eyebrow">Today</span><b style="font-size:14px">Disney+ took €8.99 again</b><span class="sm">€8.99 a month in bitcoin since Jan 2024 would be €[__] today.</span><div class="btns"><span class="b1">Buy €20 of bitcoin</span><span class="b2" style="background:var(--bg)">Not now</span></div></div>
+            <div class="tile" style="background:var(--t1)"><span class="k">Spent this month</span><span class="big">€1,240</span><span class="sm">€310 less than September</span></div>
+            <div class="duo">
+              <div class="tile" style="background:var(--t2)"><span class="k">Payday</span><span class="big">25 Nov</span><span class="sm">€2,840</span></div>
+              <div class="tile" style="background:var(--t4)"><span class="k">Subscriptions</span><span class="big">€61.96</span><span class="sm">5 a month</span></div>
+            </div>
+            <div class="tile" style="background:var(--t3)"><span class="k">Crypto with Xcoins</span><span class="big">€98.50</span><span class="sm">0.0010 BTC</span></div>
+          </div>
+          <div class="tabs"><span class="on">Home</span><span>Money</span><span>Crypto</span><span>Profile</span></div>
+        </div></div>
+      </div>
+
+      <div class="opt">
+        <header><b>B</b><h3>Feed</h3><p>What happened, newest first, each with its action. Lively; more nudges seen.</p></header>
+        <div class="phone"><div class="scr">
+          <div class="notch"></div>
+          <div class="top"><div class="hi">Hey Alex</div><div class="date">Thursday 30 October</div></div>
+          <div class="body">
+            <div class="feeditem"><time>Today</time><b style="font-size:13.5px">Disney+ took €8.99 again</b><span class="sm">In bitcoin since Jan 2024: €[__] today.</span><div class="btns"><span class="b1">Buy €20 of bitcoin</span></div></div>
+            <div class="feeditem"><time>Yesterday</time><b style="font-size:13.5px">Round-ups reached €21.30</b><span class="sm">From 14 card payments this week.</span><div class="btns"><span class="b1">Turn into bitcoin</span><span class="b2" style="background:var(--bg)">Keep collecting</span></div></div>
+            <div class="feeditem"><time>Monday</time><b style="font-size:13.5px">Spotify went up to €11.99</b><span class="sm">It was €10.99.</span><div class="btns"><span class="b2" style="background:var(--bg)">See subscriptions</span></div></div>
+            <div class="feeditem"><time>Sunday</time><b style="font-size:13.5px">Your week: €312 spent</b><span class="sm">2 subscriptions charged.</span></div>
+          </div>
+          <div class="tabs"><span class="on">Home</span><span>Money</span><span>Crypto</span><span>Profile</span></div>
+        </div></div>
+      </div>
+
+      <div class="opt">
+        <header><b>C</b><h3>Overview first</h3><p>All your money in one number, then what needs a look. Feels like a finance app.</p></header>
+        <div class="phone"><div class="scr">
+          <div class="notch"></div>
+          <div class="top"><div class="hi">Your money</div><div class="date">Bank and Xcoins together</div></div>
+          <div class="body">
+            <div class="tile" style="background:var(--t1)"><span class="k">Total</span><span class="big" style="font-size:26px">€2,010.90</span><span class="sm">Bank €1,912.40 · Crypto €98.50</span></div>
+            <span class="eyebrow" style="padding:4px 2px 0">Needs a look</span>
+            <div class="list">
+              <div class="row"><span>Disney+ or bitcoin?</span><span class="b1">Buy</span></div>
+              <div class="row"><span>Spotify price went up</span><span class="b2" style="background:var(--bg)">See</span></div>
+              <div class="row"><span>Rent leaves on the 1st</span><span class="b2" style="background:var(--bg)">See</span></div>
+            </div>
+            <div class="duo">
+              <div class="tile" style="background:var(--t4)"><span class="k">Subscriptions</span><span class="big">€61.96</span></div>
+              <div class="tile" style="background:var(--t2)"><span class="k">Spent</span><span class="big">€1,240</span></div>
+            </div>
+          </div>
+          <div class="tabs"><span class="on">Home</span><span>Money</span><span>Crypto</span><span>Profile</span></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="cat-h">
+    <h2 id="cat-h">Nudge catalogue</h2>
+    <p>Each nudge comes from data FiCo already has. The label is my suggestion for the pilot: <span class="pill yes">Pilot</span> <span class="pill maybe">Maybe</span> <span class="pill later">Later</span>. Nudges that mention crypto use wording approved by Xcoins compliance, and the customer always chooses the amount.</p>
+
+    <div class="stage">
+      <h3>Get to the first buy</h3>
+      <div class="nudges">
+        <article class="n"><div class="nh"><b>Subscription or bitcoin</b><span class="pill yes">Pilot</span></div>
+          <div class="msg"><span class="from">FiCo</span><p>Disney+ took €8.99 again. €8.99 a month in bitcoin since Jan 2024 would be €[__] today.</p><div class="btns"><span class="b1">Buy €20 of bitcoin</span><span class="b2">Not now</span></div></div>
+          <dl class="meta"><dt>When</dt><dd>A known subscription is charged</dd><dt>Needs</dt><dd>Transactions, bitcoin price history</dd><dt>Moves</dt><dd>Nudge → first buy</dd></dl></article>
+        <article class="n"><div class="nh"><b>Payday</b><span class="pill yes">Pilot</span></div>
+          <div class="msg"><span class="from">FiCo</span><p>Your salary arrived: €2,840. Put something aside in crypto this month?</p><div class="btns"><span class="b1">Choose an amount</span><span class="b2">Not this month</span></div></div>
+          <dl class="meta"><dt>When</dt><dd>Salary detected</dd><dt>Needs</dt><dd>Transactions</dd><dt>Moves</dt><dd>First buy, repeat buys</dd></dl></article>
+        <article class="n"><div class="nh"><b>Round-ups</b><span class="pill maybe">Maybe</span></div>
+          <div class="msg"><span class="from">FiCo</span><p>Your card payments this week round up to €21.30. Turn it into bitcoin?</p><div class="btns"><span class="b1">Buy €21.30</span><span class="b2">Keep collecting</span></div></div>
+          <dl class="meta"><dt>When</dt><dd>The round-up total passes the €20 minimum</dd><dt>Needs</dt><dd>Card transactions</dd><dt>Note</dt><dd>FiCo only counts; nothing moves until they buy</dd></dl></article>
+        <article class="n"><div class="nh"><b>Spent less</b><span class="pill maybe">Maybe</span></div>
+          <div class="msg"><span class="from">FiCo</span><p>You spent €120 less on eating out than in September.</p><div class="btns"><span class="b1">Put €20 into crypto</span><span class="b2">Nice</span></div></div>
+          <dl class="meta"><dt>When</dt><dd>A category is well below last month</dd><dt>Needs</dt><dd>Categorised transactions</dd><dt>Moves</dt><dd>Repeat buys</dd></dl></article>
+      </div>
+    </div>
+
+    <div class="stage">
+      <h3>Keep buying</h3>
+      <div class="nudges">
+        <article class="n"><div class="nh"><b>Make it automatic</b><span class="pill later">Later</span></div>
+          <div class="msg"><span class="from">FiCo</span><p>You’ve bought bitcoin twice this month. Do it automatically every payday?</p><div class="btns"><span class="b1">Set up an autobuy</span><span class="b2">No thanks</span></div></div>
+          <dl class="meta"><dt>When</dt><dd>Second manual buy</dd><dt>Needs</dt><dd>Xcoins autobuys</dd><dt>Moves</dt><dd>Buys → autobuy</dd></dl></article>
+        <article class="n"><div class="nh"><b>Card fee</b><span class="pill later">Later</span></div>
+          <div class="msg"><span class="from">FiCo</span><p>Your last buy cost €2.90 in card fees. Fuel up your Xcoins account by bank transfer to pay less.</p><div class="btns"><span class="b1">Fuel up</span><span class="b2">Not now</span></div></div>
+          <dl class="meta"><dt>When</dt><dd>A buy paid by card</dd><dt>Needs</dt><dd>Xcoins deposits, fee data</dd><dt>Moves</dt><dd>Buy → deposit</dd></dl></article>
+        <article class="n"><div class="nh"><b>Price alert</b><span class="pill later">Later</span></div>
+          <div class="msg"><span class="from">FiCo</span><p>Bitcoin is down 10% since you set this alert.</p><div class="btns"><span class="b1">Open</span><span class="b2">Edit alert</span></div></div>
+          <dl class="meta"><dt>When</dt><dd>Only alerts the customer set</dd><dt>Needs</dt><dd>Price feed</dd><dt>Moves</dt><dd>Repeat buys</dd></dl></article>
+      </div>
+    </div>
+
+    <div class="stage">
+      <h3>Everyday money (brings them back)</h3>
+      <div class="nudges">
+        <article class="n"><div class="nh"><b>Price went up</b><span class="pill yes">Pilot</span></div>
+          <div class="msg"><span class="from">FiCo</span><p>Spotify went up from €10.99 to €11.99.</p><div class="btns"><span class="b2">See subscriptions</span></div></div>
+          <dl class="meta"><dt>When</dt><dd>A subscription’s amount changes</dd><dt>Needs</dt><dd>Transactions</dd></dl></article>
+        <article class="n"><div class="nh"><b>New subscription</b><span class="pill yes">Pilot</span></div>
+          <div class="msg"><span class="from">FiCo</span><p>New monthly payment spotted: Headspace, €12.99.</p><div class="btns"><span class="b2">Keep</span><span class="b2">Review</span></div></div>
+          <dl class="meta"><dt>When</dt><dd>A second payment confirms a new subscription</dd><dt>Needs</dt><dd>Transactions</dd></dl></article>
+        <article class="n"><div class="nh"><b>Paying twice</b><span class="pill yes">Pilot</span></div>
+          <div class="msg"><span class="from">FiCo</span><p>You pay for two music services: Spotify and Apple Music.</p><div class="btns"><span class="b2">Review</span></div></div>
+          <dl class="meta"><dt>When</dt><dd>Two subscriptions in the same category</dd><dt>Needs</dt><dd>Merchant categories</dd></dl></article>
+        <article class="n"><div class="nh"><b>Bill ahead</b><span class="pill maybe">Maybe</span></div>
+          <div class="msg"><span class="from">FiCo</span><p>Rent (€650) leaves on the 1st. Your balance is €540.</p><div class="btns"><span class="b2">See details</span></div></div>
+          <dl class="meta"><dt>When</dt><dd>A known bill is due and the balance is lower</dd><dt>Needs</dt><dd>Balance, recurring payments</dd></dl></article>
+        <article class="n"><div class="nh"><b>Weekly summary</b><span class="pill yes">Pilot</span></div>
+          <div class="msg"><span class="from">FiCo</span><p>Your week: €312 spent, 2 subscriptions charged, bitcoin up 3%.</p><div class="btns"><span class="b2">Open</span></div></div>
+          <dl class="meta"><dt>When</dt><dd>Sunday evening, as chosen in onboarding</dd><dt>Needs</dt><dd>Transactions, price feed</dd></dl></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="ask" aria-labelledby="ask-h">
+    <h2 id="ask-h">What I need from you</h2>
+    <ol>
+      <li><b>Home screen:</b> A, B, C, or a mix.</li>
+      <li><b>Nudges for the pilot:</b> my suggestion is Subscription or bitcoin, Payday, Price went up, New subscription, Paying twice and Weekly summary. Add, drop, or reword.</li>
+      <li><b>Where nudges reach people:</b> in the app only, or also by email? A web app can’t reliably send push notifications to iPhones unless the customer adds it to their home screen.</li>
+      <li><b>How many a week:</b> a cap, so FiCo doesn’t nag. I’d start at three.</li>
+    </ol>
+  </section>
+</div>
