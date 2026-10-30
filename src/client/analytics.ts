@@ -43,6 +43,9 @@ function start(): Promise<void> {
     ph.init(KEY, {
       api_host: HOST,
       person_profiles: "identified_only",
+      // Autocapture records button text, which can contain amounts. Only the
+      // events in src/shared/events.ts are sent.
+      autocapture: false,
       session_recording: { maskAllInputs: true, maskTextSelector: "*" },
     });
     ph.opt_in_capturing();
