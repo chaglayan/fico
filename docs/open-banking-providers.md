@@ -109,6 +109,29 @@ FiCo app ──▶ FiCo backend ──▶ Provider API (Tink / TrueLayer / Enabl
 - We need a privacy policy, a data processing agreement with the provider, and
   the agreed data agreement with Xcoins.
 
+## Update: Yapily, no licence, no stored data (30 Oct 2026)
+
+- **Yapily Connect lets an unlicensed company show bank data to EEA users
+  without becoming an agent**, according to Yapily's docs. Customers of
+  Yapily Connect UAB (Lithuania) can show account information to EEA users
+  without agency; Yapily Connect Ltd (UK) customers need an FCA-approved agency
+  for personal finance apps. The bank shows "Yapily Connect" to the customer,
+  not FiCo. ([Yapily Connect AIS UX guidelines](https://docs.yapily.com/tools-and-services/yapily-connect/yapilyconnect-ux-ais-guidelines),
+  [Licensing & registration](https://docs.yapily.com/concepts/licensing-and-registration))
+- **"Hold no data" design: a stateless backend.** The app keeps the consent
+  token in the phone's secure storage. FiCo's backend only signs requests to
+  Yapily with FiCo's secret, passes the data through, and stores nothing.
+  Subscriptions are worked out on the fly. Trade-off: no reliable background
+  refresh, so no "Disney+ just charged you" push. Nudges appear when the
+  customer opens the app. FiCo is still a GDPR controller while it processes
+  the data, so a privacy policy and a data processing agreement with Yapily are
+  still needed.
+- **Contracting entity.** A Turkish sole proprietorship is a poor fit:
+  unlimited personal liability, EU personal data processed outside the EU
+  (Turkey has no EU adequacy decision), and its use for salary income may have
+  tax consequences. Options: Xcoins signs for the pilot, or an EU company once
+  the team is settled. The sandbox needs no entity.
+
 ## Questions to send every provider
 
 1. Do you offer the agent model for EU customers in [countries], and how long
