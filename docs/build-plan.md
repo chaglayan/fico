@@ -26,7 +26,8 @@ Each slice is one or more pull requests, reviewable and testable on its own.
    prototype, German and English, PostHog with consent, CI.
 1. **Sign-in and onboarding.** Account, name, goals, analytics consent.
 2. **Bank connection.** Yapily sandbox (and a simulated bank), accounts and
-   transactions, minimal storage, 180-day consent tracking.
+   transactions, minimal storage, 180-day consent tracking. *Built; see
+   `bank-connection.md`. Not yet tried against Yapily's sandbox.*
 3. **Spending and subscriptions.** Categories, subscription detection with
    tests, the first look.
 4. **Home and Money.** Home option A; the feed under Money.
@@ -39,6 +40,7 @@ Each slice is one or more pull requests, reviewable and testable on its own.
 
 ## Needed from the founder
 
-- Yapily sandbox application ID and secret, as environment secrets.
+- Yapily sandbox application ID and secret, as environment secrets, and the
+  callback URLs added in the Yapily Console (`bank-connection.md`).
 - A PostHog EU project key (free sign-up).
 - Later: a domain name on Cloudflare, and a Supabase account (free to start).

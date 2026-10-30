@@ -12,6 +12,8 @@ Yapily Connect (EU), crypto through Xcoins.
 - `docs/build-plan.md`: stack and the order of slices.
 - `docs/analytics.md`: events and privacy rules for PostHog.
 - `docs/open-banking-providers.md`: Yapily and the alternatives.
+- `docs/bank-connection.md`: how the bank connection works and how to try the
+  Yapily sandbox.
 - `prototype/`: clickable design prototypes. `onboarding.html` is the accepted
   flow and look; `home-nudges.html` holds the home screen and nudge decisions.
 
@@ -40,5 +42,6 @@ Yapily Connect (EU), crypto through Xcoins.
   app works end to end without either being live.
 - **FiCo never moves money or places orders on its own.** Anything that buys,
   sells or transfers happens in the Xcoins window, confirmed by the customer.
-- **Secrets never go in the repo.** Locally in `.dev.vars` and `.env.local`;
+- **Secrets never go in the repo.** Locally in `.dev.vars` (template in
+  `.dev.vars.example`) and `.env.local`;
   in production as Cloudflare secrets.

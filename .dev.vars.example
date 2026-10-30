@@ -1,0 +1,14 @@
+# Copy to .dev.vars for `npm run dev`. Never commit .dev.vars.
+# In production, set each of these with `npx wrangler secret put NAME`.
+
+# Yapily sandbox application (console.yapily.com > Applications). Leave empty
+# to use only the simulated banks.
+YAPILY_APPLICATION_ID=
+YAPILY_APPLICATION_SECRET=
+
+# Encrypts bank consent tokens at rest. Make one with: openssl rand -base64 32
+# Optional locally (a development key is used); required when APP_ENV=production.
+TOKEN_KEY=
+
+# PostHog EU project key, for events the backend sends (bank_connected and so on).
+POSTHOG_KEY=

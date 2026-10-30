@@ -3,6 +3,22 @@
 The running record of what we decided and why. Newest first. Every build
 session reads this before starting.
 
+## 2026-10-30 (slice 2, interim, for the founder to confirm)
+
+**Bank data in Cloudflare KV until Supabase is set up.** Slice 2 came before
+sign-in, so there's no Supabase project yet. Connections are stored in a KV
+namespace behind a small storage interface (`src/worker/bank/store.ts`);
+moving to Supabase means one new implementation of it. Supabase stays the
+decision for the database.
+
+**An anonymous session until sign-in.** Each browser gets a random secret in
+an HttpOnly cookie; the user ID is a hash of it, so the ID can go to Yapily
+(`applicationUserId`) and PostHog without exposing the session. Slice 1
+replaces this with Supabase sign-in.
+
+**One bank per customer for the pilot**, matching "Connect your main bank" in
+the prototype. Connecting another bank replaces the first.
+
 ## 2026-10-31 (later)
 
 **Hosting: Cloudflare, not Vercel.** The founder already hosts on Cloudflare.

@@ -12,6 +12,9 @@ export type Consent = "granted" | "denied" | null;
 
 let posthog: PostHog | null = null;
 let loading: Promise<void> | null = null;
+let userId: string | null = null;
+let replayHidden = false;
+let replayPaused = false;
 // Events tracked while PostHog is still loading, sent once it's ready.
 const queued: [EventName, EventProps | undefined][] = [];
 
@@ -49,7 +52,9 @@ function start(): Promise<void> {
       session_recording: { maskAllInputs: true, maskTextSelector: "*" },
     });
     ph.opt_in_capturing();
+    if (userId) ph.identify(userId);
     posthog = ph;
+    if (replayHidden) hideFromReplay(true);
     for (const [event, props] of queued.splice(0)) ph.capture(event, props);
   });
   return loading;
@@ -63,4 +68,25 @@ export function resumeAnalytics(): void {
 export function track(event: EventName, props?: EventProps): void {
   if (posthog) posthog.capture(event, props);
   else if (loading) queued.push([event, props]);
+}
+
+// Ties events to FiCo's random user ID, the same one the backend sends with
+// its events (docs/analytics.md, rule 2).
+export function identify(id: string): void {
+  userId = id;
+  posthog?.identify(id);
+}
+
+// Screens with balances or transactions are left out of session replays.
+export function hideFromReplay(hidden: boolean): void {
+  replayHidden = hidden;
+  if (!posthog) return;
+  if (hidden && posthog.sessionRecordingStarted()) {
+    posthog.stopSessionRecording();
+    replayPaused = true;
+  } else if (!hidden && replayPaused) {
+    // Only resume a recording this paused; never start one the project has off.
+    replayPaused = false;
+    posthog.startSessionRecording();
+  }
 }

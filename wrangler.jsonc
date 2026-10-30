@@ -9,6 +9,9 @@
     // Requests under /api go to the worker before static assets.
     "run_worker_first": ["/api/*"]
   },
+  // Bank connections (src/worker/bank/store.ts). No id: wrangler creates the
+  // namespace on the first deploy, and `npm run dev` uses a local one.
+  "kv_namespaces": [{ "binding": "BANK" }],
   "vars": {
     "APP_ENV": "development"
   },
