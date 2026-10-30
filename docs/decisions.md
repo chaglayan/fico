@@ -3,6 +3,29 @@
 The running record of what we decided and why. Newest first. Every build
 session reads this before starting.
 
+## 2026-10-31
+
+**Home: option A, "Today first".** One action at the top, tiles below. The
+feed (option B) lives under the Money tab.
+
+**Pilot nudges:** Subscription or bitcoin, Payday, Price went up, New
+subscription, Paying twice, Weekly summary.
+
+**Channels and caps.**
+- In the app: no hard cap. At most one new "Today" nudge a day on Home; the
+  rest go to the Money feed.
+- Email: at most 2 a week, one of them the weekly summary.
+- Price alerts the customer sets don't count toward either cap.
+
+**Price alerts in the pilot, alert only.** The customer picks a coin and a
+price; FiCo notifies in the app and by email. "Buy automatically when the price
+reaches X" needs Xcoins to support conditional orders, so it is an ask for
+Xcoins, not pilot scope. FiCo never places an order on its own.
+
+**Language: German and English.** The founder doesn't speak German, so a
+native speaker reviews German copy before the pilot, and Xcoins compliance
+approves the German wording of crypto nudges.
+
 ## 2026-10-30
 
 **Platform: web app first.** Built so it can become a mobile app later. No
